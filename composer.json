@@ -1,0 +1,15 @@
+{
+  "name": "werkbot/werkbot-search",
+  "description": "Provides search functionality with TNTSearch",
+  "type": "silverstripe-vendormodule",
+  "require": {
+    "silverstripe/cms": "~4.8",
+    "silverstripe/framework": "~4.8",
+    "teamtnt/tntsearch": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Werkbot\\Search\\": "src/"
+    }
+  }
+}
