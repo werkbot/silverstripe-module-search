@@ -12,8 +12,11 @@ use SilverStripe\ORM\PaginatedList;
 use Werkbot\Search\TNTSearchHelper;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\CMS\Search\SearchForm;
 use SilverStripe\ORM\FieldType\DBField;
+use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
+
 /**/
 class SearchControllerExtension extends DataExtension {
 	/**/
@@ -57,21 +60,28 @@ class SearchControllerExtension extends DataExtension {
   public function SiteSearchFormResults($searchdata, $form){
     $start = ($this->owner->getRequest()->getVar('start')) ? (int)$this->owner->getRequest()->getVar('start') : 0;
     $Results = new ArrayList();
+    $ErrorMessge = "";
 
     if($searchdata['Search']){
-      $tnt = TNTSearchHelper::Instance()->getTNTSearch();
-      $tnt->selectIndex('site.index');
-      $res = $tnt->search($searchdata['Search']);
-      $classlist = [];
-      $classes = ClassInfo::classesWithExtension("Werkbot\Search\SearchableExtension");
-      foreach($classes as $key => $value){
-        $classlist[ClassInfo::shortName($value)] = $value;
-      }
-      foreach($res["ids"]  as $result){
-        $parts = explode("_", $result);
-        if($obj = $classlist[$parts[0]]::get()->byID($parts[1])){
-          $Results->push($obj);
+      try{
+        $tnt = TNTSearchHelper::Instance()->getTNTSearch();
+        $tnt->selectIndex('site.index');
+        $res = $tnt->search($searchdata['Search']);
+        $classlist = [];
+        $classes = ClassInfo::classesWithExtension("Werkbot\Search\SearchableExtension");
+        foreach($classes as $key => $value){
+          $classlist[ClassInfo::shortName($value)] = $value;
         }
+        foreach($res["ids"]  as $result){
+          $parts = explode("_", $result);
+          if($obj = $classlist[$parts[0]]::get()->byID($parts[1])){
+            $Results->push($obj);
+          }
+        }
+      }catch(IndexNotFoundException $e) {
+        $validationResult = new ValidationResult();
+        $validationResult->addFieldError('Message', 'Search index not found');
+        $form->setSessionValidationResult($validationResult);
       }
     }
 
