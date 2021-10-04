@@ -13,6 +13,10 @@ class SearchIndex extends BuildTask{
   protected $enabled = true;
   /**/
   public function run($request){
+    if (!file_exists(dirname(__DIR__, 5).'/search')) {
+      mkdir(dirname(__DIR__, 5).'/search');
+      echo "Created search folder<br /><br />";
+    }
     $indexer = TNTSearchHelper::Instance()->getTNTSearchIndex(true);
     $classes = ClassInfo::classesWithExtension("Werkbot\Search\SearchableExtension");
     foreach ($classes as $Title => $ClassName) {
