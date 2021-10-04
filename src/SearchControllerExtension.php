@@ -64,7 +64,7 @@ class SearchControllerExtension extends DataExtension {
       $res = $tnt->search($searchdata['Search']);
       $classlist = [];
       $classes = ClassInfo::classesWithExtension("Werkbot\Search\SearchableExtension");
-      foreach($classes as $eky => $value){
+      foreach($classes as $key => $value){
         $classlist[ClassInfo::shortName($value)] = $value;
       }
       foreach($res["ids"]  as $result){
@@ -85,6 +85,6 @@ class SearchControllerExtension extends DataExtension {
       'Query' => DBField::create_field('Text', $form->getSearchQuery()),
       'Title' => _t('SilverStripe\\CMS\\Search\\SiteSearchForm.SearchResults', 'Search Results')
     );
-    return $this->owner->customise($data)->renderWith(array('SiteSearchFormResultsPage', 'Page'));
+    return $this->owner->customise($data)->renderWith(array('SearchableResultsPage', 'Page'));
   }
 }

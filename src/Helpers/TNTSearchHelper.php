@@ -29,23 +29,11 @@ class TNTSearchHelper{
       'database'  => Environment::getEnv('SS_DATABASE_NAME'),
       'username'  => Environment::getEnv('SS_DATABASE_USERNAME'),
       'password'  => Environment::getEnv('SS_DATABASE_PASSWORD'),
-      'storage'   => dirname(__DIR__, 5).'\search',
+      'storage'   => dirname(__DIR__, 5).'/search',
       'stemmer'   => \TeamTNT\TNTSearch\Stemmer\PorterStemmer::class
     ]);
     return $tnt;
   }
-
-  /**
-   * getTNTSearch_CreateIndex
-   *
-   * @return TNTIndexer
-   */
-  /*public function getTNTSearch_CreateIndex(){
-    $tnt = $this->getTNTSearch();
-    $indexer = $tnt->createIndex('site.index');
-    $indexer->setPrimaryKey('ID');
-    return $indexer;
-  }*/
 
   /**
    * getTNTSearch_SelectIndex
