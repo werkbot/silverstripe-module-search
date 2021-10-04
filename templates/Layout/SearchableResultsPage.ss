@@ -19,7 +19,7 @@
                     $getSearchableSummary.ContextSummary(200)
                     <br />
                   <% end_if %>
-                  <a href="$Link" class="button minor" aria-label="Read more about <% if $SearchableTitle %>$SearchableTitle<% else_if $Title %>$Title<% end_if %>">Read More</a>
+                  <a href="$Link" class="button minor" aria-label="Read more about <% if $getSearchableTitle %>$getSearchableTitle<% else_if $Title %>$Title<% end_if %>">Read More</a>
                 </p>
               </div>
             <% end_loop %>

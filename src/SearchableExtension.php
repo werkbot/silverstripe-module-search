@@ -48,7 +48,11 @@ class SearchableExtension extends DataExtension {
    * @return string
    */
   public function getSearchableTitle(){
-    return $this->owner->{$this->owner->SearchableExtension_Title_ColumnName};
+    if($this->owner->SearchableExtension_Title_ColumnName){
+      return $this->owner->{$this->owner->SearchableExtension_Title_ColumnName};
+    }else{
+      return $this->owner->Title;
+    }
   }
   /**
    * getSearchableSummary
@@ -58,7 +62,11 @@ class SearchableExtension extends DataExtension {
    * @return string
    */
   public function getSearchableSummary(){
-    return $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+    if($this->owner->SearchableExtension_Summary_ColumnName){
+      return $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+    }else{
+      return $this->owner->Content;
+    }
   }
   /**
    * insertIndex
