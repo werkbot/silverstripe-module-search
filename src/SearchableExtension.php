@@ -55,6 +55,19 @@ class SearchableExtension extends DataExtension {
     }
   }
   /**
+   * getSearchableTitleColumnName
+   * Returns the name of the Title Column, "Title" is returned if the
+   * SearchableExtension_Title_ColumnName is not overridden
+   * @return string
+   */
+  public function getSearchableTitleColumnName(){
+    if($this->owner->SearchableExtension_Title_ColumnName){
+      return $this->owner->SearchableExtension_Title_ColumnName;
+    }else{
+      return "Title";
+    }
+  }
+  /**
    * getSearchableSummary
    * Returns the content, to be used in search results
    * Override if Content uses a different variable name
@@ -69,6 +82,19 @@ class SearchableExtension extends DataExtension {
     }
   }
   /**
+   * getSearchableSummaryColumnName
+   * Returns the name of the Summary Column, "Content" is returned if the
+   * SearchableExtension_Summary_ColumnName is not overridden
+   * @return string
+   */
+  public function getSearchableSummaryColumnName(){
+    if($this->owner->SearchableExtension_Summary_ColumnName){
+      return $this->owner->SearchableExtension_Summary_ColumnName;
+    }else{
+      return "Content";
+    }
+  }
+  /**
    * insertIndex
    *
    * @return void
@@ -78,8 +104,8 @@ class SearchableExtension extends DataExtension {
     $index->insert([
       'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
       'ClassName' => $this->owner->ClassName,
-      $this->owner->SearchableExtension_Title_ColumnName => $this->owner->{$this->owner->SearchableExtension_Title_ColumnName},
-      $this->owner->SearchableExtension_Summary_ColumnName => $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName},
+      $this->owner->getSearchableTitleColumnName() => $this->owner->getSearchableTitle(),
+      $this->owner->getSearchableSummaryColumnName() => $this->owner->getSearchableSummary(),
     ]);
   }
   /**
@@ -94,8 +120,8 @@ class SearchableExtension extends DataExtension {
       [
         'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
         'ClassName' => $this->owner->ClassName,
-        $this->owner->SearchableExtension_Title_ColumnName => $this->owner->{$this->owner->SearchableExtension_Title_ColumnName},
-        $this->owner->SearchableExtension_Summary_ColumnName => $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName},
+        $this->owner->getSearchableTitleColumnName() => $this->owner->getSearchableTitle(),
+        $this->owner->getSearchableSummaryColumnName() => $this->owner->getSearchableSummary(),
       ]
     );
   }
@@ -119,6 +145,7 @@ class SearchableExtension extends DataExtension {
         $this->owner->updateIndex();
       }
     }
+		parent::onBeforeWrite();
   }
   /**
    * onAfterWrite
