@@ -4,6 +4,7 @@ namespace Werkbot\Search;
 /**/
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\Versioned\Versioned;
 /**/
 class SearchableExtension extends DataExtension {
   /*
