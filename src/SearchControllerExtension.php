@@ -48,6 +48,7 @@ class SearchControllerExtension extends DataExtension {
     );
     $form = SearchForm::create($this->owner, 'SiteSearchForm', $fields, $actions, $requried);
 		$form->setTemplate('Forms\\SiteSearchForm');
+    $form->setFormAction('/home/SiteSearchForm');
     return $form;
   }
   /**
