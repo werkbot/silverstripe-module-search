@@ -2,6 +2,7 @@
 /**/
 namespace Werkbot\Search;
 /**/
+use SilverStripe\ORM\DB;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Versioned\Versioned;
@@ -192,5 +193,23 @@ class SearchableExtension extends DataExtension {
    */
   public function onAfterDelete() {
     $this->owner->deleteIndex();
+  }
+  /**
+   * requireDefaultRecords
+   * Runs the index on a dev/build
+  */
+  public function requireDefaultRecords(){
+    parent::requireDefaultRecords();
+
+    if (!file_exists(dirname(__DIR__, 4).'/search')) {
+      mkdir(dirname(__DIR__, 4).'/search');
+      echo "Created search folder<br /><br />";
+    }
+    $indexer = TNTSearchHelper::Instance()->getTNTSearchIndex(true);
+    if($query = $this->owner->getIndexQuery()){
+      $indexer->query($query);
+      $indexer->run();
+      DB::alteration_message('Indexing...'.$this->owner->ClassName, 'created');
+    }
   }
 }
