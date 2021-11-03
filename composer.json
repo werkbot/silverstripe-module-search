@@ -5,7 +5,8 @@
   "require": {
     "silverstripe/cms": "~4.8",
     "silverstripe/framework": "~4.8",
-    "teamtnt/tntsearch": "*"
+    "teamtnt/tntsearch": "v2.8.0",
+    "ext-sqlite3": "*"
   },
   "autoload": {
     "psr-4": {
