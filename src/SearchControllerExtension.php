@@ -45,6 +45,7 @@ class SearchControllerExtension extends DataExtension {
       FormAction::create('SiteSearchFormResults', '')
         ->setUseButtonTag(true)
         ->setButtonContent('<i class="fal fa-search"></i>')
+        ->setAttribute('aria-label', 'Search')
     );
     $form = SearchForm::create($this->owner, 'SiteSearchForm', $fields, $actions, $requried);
 		$form->setTemplate('Forms\\SiteSearchForm');
