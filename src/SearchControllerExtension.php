@@ -44,12 +44,15 @@ class SearchControllerExtension extends DataExtension {
     $actions = new FieldList(
       FormAction::create('SiteSearchFormResults', '')
         ->setUseButtonTag(true)
-        ->setButtonContent(_t("Search.BUTTON_LABEL", '<i class="fal fa-search"></i>'))
-        ->setAttribute('aria-label', 'Search')
+        ->setButtonContent(_t("Search.BUTTON_LABEL", 'Search'))
+        ->setAttribute('aria-label', _t("Search.BUTTON_ARIALABEL", 'Search'))
     );
     $form = SearchForm::create($this->owner, 'SiteSearchForm', $fields, $actions, $requried);
 		$form->setTemplate('Forms\\SiteSearchForm');
     $form->setFormAction('/home/SiteSearchForm');
+
+    $this->owner->extend("updateSiteSearchForm", $fields, $required, $actions, $form);
+
     return $form;
   }
   /**
@@ -86,6 +89,8 @@ class SearchControllerExtension extends DataExtension {
         $form->setSessionValidationResult($validationResult);
       }
     }
+
+    $this->owner->extend("updateSiteSearchFormResults", $searchdata, $form, $Results);
 
     // Pack up the results
     //$Results->removeDuplicates("PageID");

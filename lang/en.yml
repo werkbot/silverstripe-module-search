@@ -4,5 +4,5 @@ en:
     INPUT_ARIALABEL: 'Enter search terms'
     INPUT_PLACEHOLDER: 'Enter search terms'
     INPUT_TITLE: 'Search'
-    BUTTON_LABEL: '<i class="fal fa-search"></i>'
-    BUTTON_ARIALABEL: 'Search Website'
+    BUTTON_LABEL: 'Search'
+    BUTTON_ARIALABEL: 'Search'
