@@ -1,0 +1,8 @@
+en:
+  Search:
+    INPUT_LABEL: false
+    INPUT_ARIALABEL: 'Enter search terms'
+    INPUT_PLACEHOLDER: 'Enter search terms'
+    INPUT_TITLE: 'Search'
+    BUTTON_LABEL: 'Search'
+    BUTTON_ARIALABEL: 'Search'
