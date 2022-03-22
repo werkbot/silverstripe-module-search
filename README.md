@@ -56,7 +56,7 @@ Then define `getIndexQuery` function on the DataObject:
 ```
 public function getIndexQuery(){
   return "SELECT
-      concat(\"CLASSNAME_\",ContentLayout.ID) AS ID,
+      concat(\"CLASSNAME_\", ID) AS ID,
       ClassName,
       Title,
       Content
@@ -66,7 +66,7 @@ public function getIndexQuery(){
 ```
 
 In the query, the classname of the dataobject is added to the id, like so: `concat(\"CLASSNAME_\", ID) AS ID`
-So its the the Classname of the DataObject, followed by an underscore, then the ID selector. This is used by the search function (`function SiteSearchFormResults`), it allows us to lookup the objects correctly.
+So it's the Classname of the DataObject, followed by an underscore, then the ID selector. This is used by the search function (`function SiteSearchFormResults`), it allows us to lookup the objects correctly.
 
 The object will also need to have a `Link` function defined that returns a link. This is used for the search results to link the result to a corresonding page. Here is an example of a dataobject that has a `has_one` relationship with `Page::class`:
 ```
