@@ -141,13 +141,13 @@ class SearchableExtension extends DataExtension {
    *
    * @return void
    */
-	public function onBeforeWrite(){
+  public function onBeforeWrite(){
     if($this->owner->isInDB() && !$this->owner->hasExtension(Versioned::class)){
       if($this->owner->isChanged($this->owner->SearchableExtension_Title_ColumnName) || $this->owner->isChanged($this->owner->SearchableExtension_Summary_ColumnName)){
         $this->owner->updateIndex();
       }
     }
-		parent::onBeforeWrite();
+    parent::onBeforeWrite();
   }
   /**
    * onAfterWrite
@@ -158,8 +158,8 @@ class SearchableExtension extends DataExtension {
     if($this->owner->isChanged('ID') && !$this->owner->hasExtension(Versioned::class)){
       $this->owner->insertIndex();
     }
-		parent::onAfterWrite();
-	}
+    parent::onAfterWrite();
+  }
   /**
    * onBeforePublish
    *

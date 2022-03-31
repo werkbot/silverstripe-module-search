@@ -73,7 +73,7 @@ class SearchControllerExtension extends DataExtension {
         $tnt->selectIndex('site.index');
         $res = $tnt->search($searchdata['Search']);
         $classlist = [];
-        $classes = ClassInfo::classesWithExtension("Werkbot\Search\SearchableExtension");
+        $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
         foreach($classes as $key => $value){
           $classlist[ClassInfo::shortName($value)] = $value;
         }
@@ -93,7 +93,6 @@ class SearchControllerExtension extends DataExtension {
     $this->owner->extend("updateSiteSearchFormResults", $searchdata, $form, $Results);
 
     // Pack up the results
-    //$Results->removeDuplicates("PageID");
     $Paged = new PaginatedList($Results, $this->owner->getRequest());
     $Paged->setPageLength(10);
     $Paged->setPageStart($start);
