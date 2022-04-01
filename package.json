@@ -1,6 +1,6 @@
 {
   "name": "werkbot-search",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "A silverstripe search module that utilizes TNTSearch to index content and provides search functionality",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
