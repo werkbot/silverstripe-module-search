@@ -6,3 +6,7 @@ en:
     INPUT_TITLE: 'Search'
     BUTTON_LABEL: 'Search'
     BUTTON_ARIALABEL: 'Search'
+    SEARCH_QUERY: 'You Searched for:'
+    BUTTON_READMORE: 'Read More'
+    RESULTS_NOTFOUNDTITLE: 'Nothing Found'
+    RESULTS_NOTFOUNDCONTENT: 'Sorry, your search query did not return any results.'
