@@ -20,7 +20,7 @@ class SearchIndex extends BuildTask
           echo "Created search folder<br /><br />";
       }
       $indexer = TNTSearchHelper::Instance()->getTNTSearchIndex(true);
-      $classes = ClassInfo::classesWithExtension("Werkbot\Search\SearchableExtension");
+      $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
       foreach ($classes as $Title => $ClassName) {
           $searchableClass = singleton($ClassName);
           if ($query = $searchableClass->getIndexQuery()) {
