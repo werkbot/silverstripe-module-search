@@ -5,7 +5,7 @@
   <% loop $Results %>
     <div class="search-result">
       <% if $getSearchableTitle %>
-        <h3>$getSearchableTitle</h3>
+        <h3 class="search-result-title">$getSearchableTitle</h3>
       <% else_if $Title %>
         <h3>$Title</h3>
       <% end_if %>
