@@ -2,20 +2,23 @@
 /**/
 namespace Werkbot\Search;
 /**/
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\Core\ClassInfo;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\FormAction;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\PaginatedList;
-use Werkbot\Search\TNTSearchHelper;
-use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Environment;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\PaginatedList;
+use SilverStripe\ORM\ValidationResult;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
+use Werkbot\Search\TNTSearchHelper;
+use Page;
 /**/
 class SearchControllerExtension extends DataExtension
 {
@@ -103,6 +106,29 @@ class SearchControllerExtension extends DataExtension
         'Query' => DBField::create_field('Text', $form->getSearchQuery()),
         'Title' => _t('SilverStripe\\CMS\\Search\\SiteSearchForm.SearchResults', 'Search Results')
       );
+
+      if($this->owner->request->getHeader('Accept') == 'application/json' || Environment::getEnv('NEXTJS_DEBUGGING')){
+        $resultsArray = $Paged->toNestedArray();
+        foreach($resultsArray as $pageKey => $page){
+          if(Page::get()->byID($page['ID'])){
+            $page['Link'] = substr(Page::get()->byID($page['ID'])->Link(), 1);
+            $resultsArray[$pageKey] = $page;
+          }
+        }
+        $data['Results'] = $resultsArray;
+        $data['MoreThanOnePage'] = $Paged->MoreThanOnePage();
+        $data['NotFirstPage'] = $Paged->NotFirstPage();
+        $data['NotLastPage'] = $Paged->NotLastPage();
+        $data['PrevLink'] = $Paged->PrevLink();
+        $data['NextLink'] = $Paged->NextLink();
+        $data['PaginationSummary'] = $Paged->PaginationSummary(20);
+        $response = HTTPResponse::create(json_encode($data));
+        if (Environment::getEnv('SS_ENVIRONMENT_TYPE') == 'dev') {
+          $response->addHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        }
+        return $response;
+      }
+
       return $this->owner->customise($data)->renderWith(array('SearchableResultsPage', 'Page'));
   }
 }
