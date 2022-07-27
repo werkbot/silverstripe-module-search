@@ -1,3 +1,4 @@
+Change
 # Silverstripe TNTSearch
 [![Latest Stable Version](http://poser.pugx.org/werkbot/werkbot-search/v)](https://packagist.org/packages/werkbot/werkbot-search) [![Total Downloads](http://poser.pugx.org/werkbot/werkbot-search/downloads)](https://packagist.org/packages/werkbot/werkbot-search) [![Latest Unstable Version](http://poser.pugx.org/werkbot/werkbot-search/v/unstable)](https://packagist.org/packages/werkbot/werkbot-search) [![License](http://poser.pugx.org/werkbot/werkbot-search/license)](https://packagist.org/packages/werkbot/werkbot-search) [![PHP Version Require](http://poser.pugx.org/werkbot/werkbot-search/require/php)](https://packagist.org/packages/werkbot/werkbot-search)
 
