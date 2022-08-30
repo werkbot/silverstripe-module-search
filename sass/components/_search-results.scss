@@ -1,0 +1,19 @@
+.search-query{
+  background: #efefef;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: solid 1px #cccccc;
+  h2{
+    font-size: 1.5em;
+    line-height: 1;
+    margin: 0;
+  }
+}
+.search-result{
+  margin-bottom: 20px;
+  padding: 10px 0;
+  border-bottom: solid 1px #cccccc;
+  mark{
+    background: rgba(255,255,0,0.25);
+  }
+}
