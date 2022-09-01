@@ -75,7 +75,7 @@ class SearchableExtension extends DataExtension
   }
   /**
    * getSearchableSummary
-   * Returns the content, to be used in search results
+   * Returns the content to be used in search results
    * Override if Content uses a different variable name
    *
    * @return string
@@ -87,6 +87,20 @@ class SearchableExtension extends DataExtension
       } else {
           return $this->owner->Content;
       }
+  }
+  /**
+   * getSearchableContent
+   * Returns the content to be used when indexing this record
+   * Override if Content uses a different variable name or to include more searchable content:
+   *
+   * Example, the specified column data from all child records will be concatendated to the searchable content:
+   * return $this->Content . implode(',', $this->Children()->column('SearchTerm'));
+   *
+   * @return string
+  **/
+  public function getSearchableContent()
+  {
+    return $this->getSearchableSummary();
   }
   /**
    * getSearchableSummaryColumnName
@@ -113,8 +127,8 @@ class SearchableExtension extends DataExtension
       $index->insert([
         'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
         'ClassName' => $this->owner->ClassName,
-        $this->owner->getSearchableTitleColumnName() => $this->owner->getSearchableTitle(),
-        $this->owner->getSearchableSummaryColumnName() => $this->owner->getSearchableSummary(),
+        'Title' => $this->owner->getSearchableTitle(),
+        'Content' => $this->owner->getSearchableContent(),
       ]);
   }
   /**
@@ -130,8 +144,8 @@ class SearchableExtension extends DataExtension
           [
             'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
             'ClassName' => $this->owner->ClassName,
-            $this->owner->getSearchableTitleColumnName() => $this->owner->getSearchableTitle(),
-            $this->owner->getSearchableSummaryColumnName() => $this->owner->getSearchableSummary(),
+            'Title' => $this->owner->getSearchableTitle(),
+            'Content' => $this->owner->getSearchableContent(),
           ]
       );
   }
