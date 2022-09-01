@@ -47,5 +47,10 @@ This is a simple query that is used by the indexer to index your content.
 
 This function can be customized however you like and also can be added to DataObjects.
 
+## External Libraries
+By default, the templates used here use classes provided by external css libraries. We suggest installing both for the best experience:
+- [Werkbot Framewerk](https://www.npmjs.com/package/werkbot-framewerk) (CSS Libarary)
+- [Font Awesome 6](https://fontawesome.com/) (Icon classes)
+
 ## Usage
 * [Usage documentation](docs/en/README.md)

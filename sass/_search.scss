@@ -1,34 +1,12 @@
-.searchform{
-  input{
-    width: 94%;
-    height: 100%;
-    padding: 3%;
-    border: none;
-  }
-  button{
-    width: 94%;
-    height: 100%;
-    padding: 3%;
-    border: none;
-    cursor: pointer;
-  }
+/*
+  Check for new framewerk, set variables to appropriate values
+  Variables below must be defined outside of framewerk check. They will use the $variable-name if it exists.
+*/
+$sitecolor-white: #fff !default;
+@if function-exists(getThemeProperty) {
+  $sitecolor-white: getThemeProperty(backgroundColorLight);
 }
-.search-query{
-  background: #efefef;
-  padding: 20px;
-  margin-bottom: 20px;
-  border: solid 1px #cccccc;
-  h2{
-    font-size: 1.5em;
-    line-height: 1;
-    margin: 0;
-  }
-}
-.search-result{
-  margin-bottom: 20px;
-  padding: 10px 0;
-  border-bottom: solid 1px #cccccc;
-  mark{
-    background: rgba(255,255,0,0.25);
-  }
-}
+
+@import './components/search-form';
+@import './components/search-results';
+@import './components/search-modal';
