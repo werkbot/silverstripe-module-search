@@ -140,7 +140,7 @@ class SearchableExtension extends DataExtension
   {
       $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
       $index->update(
-          $this->owner->ID,
+          ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
           [
             'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
             'ClassName' => $this->owner->ClassName,
