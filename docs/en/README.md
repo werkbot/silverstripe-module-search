@@ -37,3 +37,19 @@ The index is stored in the root directory of your project: `/search/site.index`
 The index is initially created on a `dev/build`. Additional `dev/build`'s will update the index for all objects with the extension.
 
 For all objects that have the extension applied, the index is updated on creation, edits/updates and delete/removals. So the index is always up to date.
+
+
+## Search Modal
+Include a search modal component on your site. The modal is opened when `<% include SearchModalLink %>` is clicked. The modal is closed when its background is clicked or when the "Escape" key is pressed.
+
+**Sass**
+- Import the styles: `@import '../../vendor/werkbot/werkbot-search/sass/search';`\
+... or include `'vendor/werkbot'` in your [build path](https://webpack.js.org/loaders/sass-loader/#object-1): `includePaths: [ 'vendor/werkbot' ]`\
+and import the style like this: `@import 'werkbot-search/sass/search';`
+
+**JavaScript**
+- Add an [alias to your build](https://webpack.js.org/configuration/resolve/#resolvealias): `'werkbot-search-modal': './vendor/werkbot/werkbot-search/js/search-modal.js'`
+- Import js: `require('werkbot-search-modal');`
+- Insert the control to open the search modal in your template: `<% include SearchModalLink %>`\
+By default, this is a list item (`li`) with a Font Awesome search icon.
+- Add the modal to your Page.ss: `<% include SearchModal %>`

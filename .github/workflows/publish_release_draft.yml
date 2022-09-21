@@ -63,16 +63,41 @@ jobs:
         if: steps.is_support_branch.outputs.filtered_branch_name == ''
         run: TAGCONTENT="${{ steps.changelog.outputs.changelog }}";CHANGELOG=$(cat CHANGELOG.md);CHANGELOG=$(echo "$CHANGELOG" | sed -e "s/# Changelog//");echo -e "# Changelog\n\n$TAGCONTENT$CHANGELOG" > CHANGELOG.md
 
-      - name: Commit Updated Changelog
-        if: steps.is_support_branch.outputs.filtered_branch_name == ''
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v4
         with:
-          commit_message: Updated CHANGELOG.md
-          branch: ${{ steps.payload_info.outputs.pull_request.base.ref }}
+          base: master
+          title: Auto-Update CHANGELOG.md
+          commit-message: Updated CHANGELOG.md
+          labels: automerge
+
+      - name: Approve PR
+        uses: hmarr/auto-approve-action@v2
+        with:
+          review-message: Auto approved automated PR
+          pull-request-number: ${{ steps.create_pr.outputs.pull-request-number }}
+          github-token: ${{ secrets.SOME_USERS_PAT }}
+
+      - name: Auto merge
+        uses: pascalgn/automerge-action@v0.15.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST: ${{ steps.create_pr.outputs.pull-request-number }}
+          MERGE_DELETE_BRANCH: true
+
+      - name: Merge master -> develop
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: master
+          target_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: Merged master into develop
 
       # Remove the release or hotfix branch after publishing
       - name: Remove PR branch
         uses: dawidd6/action-delete-branch@v3
         with:
-          github_token: ${{github.token}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branches: ${{ steps.payload_info.outputs.branch }}
