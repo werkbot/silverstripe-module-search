@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 - 2023-06-09
+## 🎉 New Features
+- save search queries ([#22](https://github.com/werkbot/silverstripe-module-search/pull/22) by [tiller1010](https://github.com/tiller1010))
+
+## 🏗️ Build System
+- updated workflow files
+
+
+
 ## 1.1.0 - 2022-09-21
 ## 🎉 New Features
 - Added search modal ([#16](https://github.com/werkbot/silverstripe-module-search/pull/16) by [tiller1010](https://github.com/tiller1010))
