@@ -1,7 +1,7 @@
 <?php
-/**/
+
 namespace Werkbot\Search;
-/**/
+
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\FieldList;
@@ -16,14 +16,14 @@ use SilverStripe\ORM\ValidationResult;
 use SilverStripe\CMS\Search\SearchForm;
 use SilverStripe\ORM\FieldType\DBField;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
-/**/
+
 class SearchControllerExtension extends DataExtension
 {
-  /**/
   private static $allowed_actions = [
     "SiteSearchForm",
     "SiteSearchFormResults",
   ];
+
   /**
    * Site search form
    *
@@ -56,6 +56,7 @@ class SearchControllerExtension extends DataExtension
 
       return $form;
   }
+
   /**
    * Process and render search results.
    *
@@ -90,13 +91,19 @@ class SearchControllerExtension extends DataExtension
               $validationResult->addFieldError('Message', 'Search index not found');
               $form->setSessionValidationResult($validationResult);
           }
+
+          // Store the Search Query
+          $sq = SearchQuery::create();
+          $sq->Query = $searchdata['Search'];
+          $sq->write();
       }
 
-      $this->owner->extend("updateSiteSearchFormResults", $searchdata, $form, $Results);
+      $pageLength = 10;
+      $this->owner->extend("updateSiteSearchFormResults", $searchdata, $form, $Results, $pageLength);
 
       // Pack up the results
       $Paged = new PaginatedList($Results, $this->owner->getRequest());
-      $Paged->setPageLength(10);
+      $Paged->setPageLength($pageLength);
       $Paged->setPageStart($start);
       $data = array(
         'Results' => $Paged,
