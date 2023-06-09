@@ -9,7 +9,8 @@
     "silverstripe/cms": "~4.8",
     "silverstripe/framework": "~4.8",
     "teamtnt/tntsearch": "v2.8.0",
-    "ext-sqlite3": "*"
+    "ext-sqlite3": "*",
+    "symbiote/silverstripe-queuedjobs": "*"
   },
   "autoload": {
     "psr-4": {
