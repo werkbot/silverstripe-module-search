@@ -2,6 +2,7 @@
 
 namespace Werkbot\Search;
 
+use SilverStripe\Core\Config\Configurable;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJobService;
 
@@ -11,6 +12,14 @@ use Symbiote\QueuedJobs\Services\QueuedJobService;
  */
 class RemoveSearchQueriesJob extends AbstractQueuedJob
 {
+  use Configurable;
+
+  /**
+   * @config
+   */
+  private static $max_age = '365 days';
+  private static $queue_next_run = 'tomorrow';
+
   public function getTitle(): string
   {
       return 'Remove Search Queries Job';
@@ -18,9 +27,9 @@ class RemoveSearchQueriesJob extends AbstractQueuedJob
 
   public function setup(): void
   {
-    // Grab queries that are older then 30 days
+    $maxAge = $this->config()->get('max_age');
     $this->items = SearchQuery::get()->filter([
-      "Created:LessThan" => date('Y-m-d H:i:s', strtotime('-365 days')),
+      "Created:LessThan" => date('Y-m-d H:i:s', strtotime('-' . $maxAge)),
     ])->sort('Created ASC')
       ->limit(100);
     $this->remaining = $this->items->toArray();
@@ -55,6 +64,7 @@ class RemoveSearchQueriesJob extends AbstractQueuedJob
 
   public function afterComplete()
   {
-    QueuedJobService::singleton()->queueJob(new RemoveSearchQueriesJob(), date('Y-m-d', strtotime('tomorrow')));
+    $queueNextRun = $this->config()->get('queue_next_run');
+    QueuedJobService::singleton()->queueJob(new RemoveSearchQueriesJob(), date('Y-m-d', strtotime($queueNextRun)));
   }
 }
