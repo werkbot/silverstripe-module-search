@@ -19,6 +19,11 @@ use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
 
 class SearchControllerExtension extends DataExtension
 {
+  /**
+   * @config
+   */
+  private static $save_search_queries = true;
+
   private static $allowed_actions = [
     "SiteSearchForm",
     "SiteSearchFormResults",
@@ -92,10 +97,12 @@ class SearchControllerExtension extends DataExtension
               $form->setSessionValidationResult($validationResult);
           }
 
-          // Store the Search Query
-          $sq = SearchQuery::create();
-          $sq->Query = $searchdata['Search'];
-          $sq->write();
+          if ($this->owner->config()->get('save_search_queries')) {
+            // Store the Search Query
+            $sq = SearchQuery::create();
+            $sq->Query = $searchdata['Search'];
+            $sq->write();
+          }
       }
 
       $pageLength = 10;
