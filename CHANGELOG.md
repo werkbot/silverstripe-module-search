@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.1 - 2023-06-26
+## 🎉 New Features
+- added configuration option to disable saved search queries ([#25](https://github.com/werkbot/silverstripe-module-search/pull/25) by [tiller1010](https://github.com/tiller1010))
+- added configuration options to control max_age and next queued job ([#26](https://github.com/werkbot/silverstripe-module-search/pull/26) by [tiller1010](https://github.com/tiller1010))
+
+## 📚 Documentation Changes
+- added documentation on queued jobs
+
+
+
 ## 1.2.0 - 2023-06-09
 ## 🎉 New Features
 - save search queries ([#22](https://github.com/werkbot/silverstripe-module-search/pull/22) by [tiller1010](https://github.com/tiller1010))
