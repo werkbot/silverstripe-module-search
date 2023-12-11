@@ -75,7 +75,7 @@ class SearchControllerExtension extends DataExtension
       $Results = new ArrayList();
       $ErrorMessge = "";
 
-      if ($searchdata['Search']) {
+      if (isset($searchdata['Search'])) {
           try {
               $tnt = TNTSearchHelper::Instance()->getTNTSearch();
               $tnt->selectIndex('site.index');
