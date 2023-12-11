@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 - 2023-12-11
+## 🐛 Bugfixes
+- added check for search key, updated workflow files
+
+
+
 ## 1.2.1 - 2023-06-26
 ## 🎉 New Features
 - added configuration option to disable saved search queries ([#25](https://github.com/werkbot/silverstripe-module-search/pull/25) by [tiller1010](https://github.com/tiller1010))
