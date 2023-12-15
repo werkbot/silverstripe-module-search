@@ -1,18 +1,17 @@
 <?php
-/**/
-namespace Werkbot\Search;
-/**/
+
+namespace Werkbot\Search\Tasks;
+
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\ClassInfo;
 use Werkbot\Search\TNTSearchHelper;
-/**/
+
 class SearchIndex extends BuildTask
 {
-  /**/
   protected $title = "Search Index";
   protected $description = "";
   protected $enabled = true;
-  /**/
+
   public function run($request)
   {
       if (!file_exists(dirname(__DIR__, 5).'/search')) {
@@ -32,3 +31,4 @@ class SearchIndex extends BuildTask
       }
   }
 }
+

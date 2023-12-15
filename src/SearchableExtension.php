@@ -1,12 +1,13 @@
 <?php
-/**/
+
 namespace Werkbot\Search;
-/**/
+
 use SilverStripe\ORM\DB;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Versioned\Versioned;
-/**/
+use Werkbot\Search\Helpers\TNTSearchHelper;
+
 class SearchableExtension extends DataExtension
 {
   /*
@@ -15,16 +16,17 @@ class SearchableExtension extends DataExtension
   */
   public $SearchableExtension_Title_ColumnName = "Title";
   public $SearchableExtension_Summary_ColumnName = "Content";
-  /**/
+
   private static $casting = [
     "getSearchableTitle" => "Text",
     "getSearchableSummary" => 'HTMLText',
   ];
+
   /**
    * getIndexQuery
    * This query is used when building the index
    *
-   * @return string/boolean - FALSE if not set
+   * @return string|boolean - FALSE if not set
    * Example:
       SELECT
         concat(\"Page_\", SiteTree.ID) AS ID,
@@ -44,6 +46,7 @@ class SearchableExtension extends DataExtension
   {
       return false;
   }
+
   /**
    * getSearchableTitle
    * Returns the title, to be used in search results
@@ -59,6 +62,7 @@ class SearchableExtension extends DataExtension
           return $this->owner->Title;
       }
   }
+
   /**
    * getSearchableTitleColumnName
    * Returns the name of the Title Column, "Title" is returned if the
@@ -73,6 +77,7 @@ class SearchableExtension extends DataExtension
           return "Title";
       }
   }
+
   /**
    * getSearchableSummary
    * Returns the content to be used in search results
@@ -88,6 +93,7 @@ class SearchableExtension extends DataExtension
           return $this->owner->Content;
       }
   }
+
   /**
    * getSearchableContent
    * Returns the content to be used when indexing this record
@@ -102,6 +108,7 @@ class SearchableExtension extends DataExtension
   {
     return $this->getSearchableSummary();
   }
+
   /**
    * getSearchableSummaryColumnName
    * Returns the name of the Summary Column, "Content" is returned if the
@@ -116,6 +123,7 @@ class SearchableExtension extends DataExtension
           return "Content";
       }
   }
+
   /**
    * insertIndex
    *
@@ -131,6 +139,7 @@ class SearchableExtension extends DataExtension
         'Content' => $this->owner->getSearchableContent(),
       ]);
   }
+
   /**
    * updateIndex
    *
@@ -149,6 +158,7 @@ class SearchableExtension extends DataExtension
           ]
       );
   }
+
   /**
    * deleteIndex
    *
@@ -159,6 +169,7 @@ class SearchableExtension extends DataExtension
       $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
       $index->delete(ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID);
   }
+
   /**
    * onBeforeWrite
    *
@@ -173,6 +184,7 @@ class SearchableExtension extends DataExtension
       }
       parent::onBeforeWrite();
   }
+
   /**
    * onAfterWrite
    *
@@ -185,6 +197,7 @@ class SearchableExtension extends DataExtension
       }
       parent::onAfterWrite();
   }
+
   /**
    * onBeforePublish
    *
@@ -196,6 +209,7 @@ class SearchableExtension extends DataExtension
           $this->owner->insertIndex();
       }
   }
+
   /**
    * onAfterPublish
    *
@@ -205,6 +219,7 @@ class SearchableExtension extends DataExtension
   {
       $this->owner->updateIndex();
   }
+
   /**
    * onAfterUnpublish
    *
@@ -214,6 +229,7 @@ class SearchableExtension extends DataExtension
   {
       $this->owner->deleteIndex();
   }
+
   /**
    * onAfterDelete
    *
@@ -223,6 +239,7 @@ class SearchableExtension extends DataExtension
   {
       $this->owner->deleteIndex();
   }
+
   /**
    * requireDefaultRecords
    * Runs the index on a dev/build
@@ -242,4 +259,6 @@ class SearchableExtension extends DataExtension
           DB::alteration_message('Indexing...'.$this->owner->ClassName, 'created');
       }
   }
+
 }
+
