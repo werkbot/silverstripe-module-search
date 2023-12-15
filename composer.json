@@ -12,6 +12,9 @@
     "ext-sqlite3": "*",
     "symbiote/silverstripe-queuedjobs": "^4.12 || ^5.1"
   },
+  "require-dev": {
+    "code-lts/doctum": "^5.5"
+  },
   "autoload": {
     "psr-4": {
       "Werkbot\\Search\\": "src/"
