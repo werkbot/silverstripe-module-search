@@ -2,20 +2,20 @@
 
 namespace Werkbot\Search;
 
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\PaginatedList;
-use Werkbot\Search\TNTSearchHelper;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\ValidationResult;
-use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\PaginatedList;
+use SilverStripe\ORM\ValidationResult;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
+use Werkbot\Search\TNTSearchHelper;
 
 class SearchControllerExtension extends DataExtension
 {
@@ -77,24 +77,11 @@ class SearchControllerExtension extends DataExtension
 
       if (isset($searchdata['Search'])) {
           try {
-              $tnt = TNTSearchHelper::Instance()->getTNTSearch();
-              $tnt->selectIndex('site.index');
-              $res = $tnt->search($searchdata['Search']);
-              $classlist = [];
-              $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
-              foreach ($classes as $key => $value) {
-                  $classlist[ClassInfo::shortName($value)] = $value;
-              }
-              foreach ($res["ids"] as $result) {
-                  $parts = explode("_", $result);
-                  if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
-                      $Results->push($obj);
-                  }
-              }
+            $Results = $this->getSearchResults($searchdata['Search']);
           } catch (IndexNotFoundException $e) {
-              $validationResult = new ValidationResult();
-              $validationResult->addFieldError('Message', 'Search index not found');
-              $form->setSessionValidationResult($validationResult);
+            $validationResult = new ValidationResult();
+            $validationResult->addFieldError('Message', 'Search index not found');
+            $form->setSessionValidationResult($validationResult);
           }
 
           if ($this->owner->config()->get('save_search_queries')) {
@@ -119,4 +106,36 @@ class SearchControllerExtension extends DataExtension
       );
       return $this->owner->customise($data)->renderWith(array('SearchableResultsPage', 'Page'));
   }
+
+  /**
+   * Get search results
+   *
+   * @param string $search
+   * @return ArrayList
+   **/
+  public function getSearchResults(string $search)
+  {
+    $results = ArrayList::create();
+
+    $tnt = TNTSearchHelper::Instance()->getTNTSearch();
+    $tnt->selectIndex('site.index');
+    $res = $tnt->search($search);
+
+    $classlist = [];
+    $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
+    foreach ($classes as $key => $value) {
+        $classlist[ClassInfo::shortName($value)] = $value;
+    }
+
+    foreach ($res['ids'] as $result) {
+        $parts = explode("_", $result);
+        if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
+            $results->push($obj);
+        }
+    }
+
+    return $results;
+  }
+
 }
+
