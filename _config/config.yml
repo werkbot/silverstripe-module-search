@@ -1,0 +1,7 @@
+---
+Name: Search Module dev/build
+---
+SilverStripe\ORM\DatabaseAdmin:
+  extensions:
+    - Werkbot\Search\DatabaseAdminExtension
+
