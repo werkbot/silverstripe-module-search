@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.3 - 2023-12-21
+## 🎉 New Features
+- get results method ([#31](https://github.com/werkbot/silverstripe-module-search/pull/31) by [tiller1010](https://github.com/tiller1010))
+
+## 🐛 Bugfixes
+- replaced requireDefaultRecords with DatabaseAdminExtension onAfterBuild ([#32](https://github.com/werkbot/silverstripe-module-search/pull/32) by [tiller1010](https://github.com/tiller1010))
+
+
+
 ## 1.2.2 - 2023-12-11
 ## 🐛 Bugfixes
 - added check for search key, updated workflow files
