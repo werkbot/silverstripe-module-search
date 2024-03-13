@@ -8,7 +8,7 @@
     "php": "^7.3 || ^8.0",
     "silverstripe/cms": "~4.8",
     "silverstripe/framework": "~4.8",
-    "teamtnt/tntsearch": "v2.8.0",
+    "teamtnt/tntsearch": "v4.2.1",
     "ext-sqlite3": "*",
     "symbiote/silverstripe-queuedjobs": "*"
   },
