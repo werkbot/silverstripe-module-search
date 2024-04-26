@@ -10,7 +10,7 @@
     "silverstripe/framework": "^5",
     "teamtnt/tntsearch": "v4.2.1",
     "ext-sqlite3": "*",
-    "symbiote/silverstripe-queuedjobs": "*"
+    "symbiote/silverstripe-queuedjobs": "^5.1"
   },
   "autoload": {
     "psr-4": {
