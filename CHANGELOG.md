@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0 - 2024-05-02
+
+
+
+
 ## 1.2.3 - 2023-12-21
 ## 🎉 New Features
 - get results method ([#31](https://github.com/werkbot/silverstripe-module-search/pull/31) by [tiller1010](https://github.com/tiller1010))
