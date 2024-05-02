@@ -38,10 +38,10 @@ class SearchableExtension extends DataExtension
         SiteTree.ID = Page.ID
       WHERE
         SiteTree.ShowInSearch = '1'";
-  **/
+   **/
   public function getIndexQuery()
   {
-      return false;
+    return false;
   }
   /**
    * getSearchableTitle
@@ -49,28 +49,28 @@ class SearchableExtension extends DataExtension
    * Override if Title uses a different variable name
    *
    * @return string
-  **/
+   **/
   public function getSearchableTitle()
   {
-      if ($this->owner->SearchableExtension_Title_ColumnName) {
-          return $this->owner->{$this->owner->SearchableExtension_Title_ColumnName};
-      } else {
-          return $this->owner->Title;
-      }
+    if ($this->owner->SearchableExtension_Title_ColumnName) {
+      return $this->owner->{$this->owner->SearchableExtension_Title_ColumnName};
+    } else {
+      return $this->owner->Title;
+    }
   }
   /**
    * getSearchableTitleColumnName
    * Returns the name of the Title Column, "Title" is returned if the
    * SearchableExtension_Title_ColumnName is not overridden
    * @return string
-  **/
+   **/
   public function getSearchableTitleColumnName()
   {
-      if ($this->owner->SearchableExtension_Title_ColumnName) {
-          return $this->owner->SearchableExtension_Title_ColumnName;
-      } else {
-          return "Title";
-      }
+    if ($this->owner->SearchableExtension_Title_ColumnName) {
+      return $this->owner->SearchableExtension_Title_ColumnName;
+    } else {
+      return "Title";
+    }
   }
   /**
    * getSearchableSummary
@@ -78,14 +78,14 @@ class SearchableExtension extends DataExtension
    * Override if Content uses a different variable name
    *
    * @return string
-  **/
+   **/
   public function getSearchableSummary()
   {
-      if ($this->owner->SearchableExtension_Summary_ColumnName) {
-          return $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
-      } else {
-          return $this->owner->Content;
-      }
+    if ($this->owner->SearchableExtension_Summary_ColumnName) {
+      return $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+    } else {
+      return $this->owner->Content;
+    }
   }
   /**
    * getSearchableContent
@@ -96,7 +96,7 @@ class SearchableExtension extends DataExtension
    * return $this->Content . implode(',', $this->Children()->column('SearchTerm'));
    *
    * @return string
-  **/
+   **/
   public function getSearchableContent()
   {
     return $this->getSearchableSummary();
@@ -106,121 +106,130 @@ class SearchableExtension extends DataExtension
    * Returns the name of the Summary Column, "Content" is returned if the
    * SearchableExtension_Summary_ColumnName is not overridden
    * @return string
-  **/
+   **/
   public function getSearchableSummaryColumnName()
   {
-      if ($this->owner->SearchableExtension_Summary_ColumnName) {
-          return $this->owner->SearchableExtension_Summary_ColumnName;
-      } else {
-          return "Content";
-      }
+    if ($this->owner->SearchableExtension_Summary_ColumnName) {
+      return $this->owner->SearchableExtension_Summary_ColumnName;
+    } else {
+      return "Content";
+    }
   }
   /**
    * insertIndex
    *
    * @return void
-  **/
+   **/
   public function insertIndex()
   {
-      $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-      $index->insert([
-        'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
-        'ClassName' => $this->owner->ClassName,
-        'Title' => $this->owner->getSearchableTitle(),
-        'Content' => $this->owner->getSearchableContent(),
-      ]);
+    $content = $this->owner->getSearchableContent();
+    if (!$content) {
+      return;
+    }
+
+    $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
+    $index->insert([
+      'ID' => ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID,
+      'ClassName' => $this->owner->ClassName,
+      'Title' => $this->owner->getSearchableTitle(),
+      'Content' => $content,
+    ]);
   }
   /**
    * updateIndex
    *
    * @return void
-  **/
+   **/
   public function updateIndex()
   {
-      $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-      $index->update(
-          ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
-          [
-            'ID' => ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID,
-            'ClassName' => $this->owner->ClassName,
-            'Title' => $this->owner->getSearchableTitle(),
-            'Content' => $this->owner->getSearchableContent(),
-          ]
-      );
+    $content = $this->owner->getSearchableContent();
+    if (!$content) {
+      return;
+    }
+
+    $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
+    $index->update(
+      ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID,
+      [
+        'ID' => ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID,
+        'ClassName' => $this->owner->ClassName,
+        'Title' => $this->owner->getSearchableTitle(),
+        'Content' => $content,
+      ]
+    );
   }
   /**
    * deleteIndex
    *
    * @return void
-  **/
+   **/
   public function deleteIndex()
   {
-      $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-      $index->delete(ClassInfo::shortName($this->owner->ClassName)."_".$this->owner->ID);
+    $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
+    $index->delete(ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID);
   }
   /**
    * onBeforeWrite
    *
    * @return void
-  **/
+   **/
   public function onBeforeWrite()
   {
-      if ($this->owner->isInDB() && !$this->owner->hasExtension(Versioned::class)) {
-          if ($this->owner->isChanged($this->owner->SearchableExtension_Title_ColumnName) || $this->owner->isChanged($this->owner->SearchableExtension_Summary_ColumnName)) {
-              $this->owner->updateIndex();
-          }
+    if ($this->owner->isInDB() && !$this->owner->hasExtension(Versioned::class)) {
+      if ($this->owner->isChanged($this->owner->SearchableExtension_Title_ColumnName) || $this->owner->isChanged($this->owner->SearchableExtension_Summary_ColumnName)) {
+        $this->owner->updateIndex();
       }
-      parent::onBeforeWrite();
+    }
+    parent::onBeforeWrite();
   }
   /**
    * onAfterWrite
    *
    * @return void
-  **/
+   **/
   public function onAfterWrite()
   {
-      if ($this->owner->isChanged('ID') && !$this->owner->hasExtension(Versioned::class)) {
-          $this->owner->insertIndex();
-      }
-      parent::onAfterWrite();
+    if ($this->owner->isChanged('ID') && !$this->owner->hasExtension(Versioned::class)) {
+      $this->owner->insertIndex();
+    }
+    parent::onAfterWrite();
   }
   /**
    * onBeforePublish
    *
    * @return void
-  **/
+   **/
   public function onBeforePublish()
   {
-      if (!$this->owner->isPublished()) {
-          $this->owner->insertIndex();
-      }
+    if (!$this->owner->isPublished()) {
+      $this->owner->insertIndex();
+    }
   }
   /**
    * onAfterPublish
    *
    * @return void
-  **/
+   **/
   public function onAfterPublish()
   {
-      $this->owner->updateIndex();
+    $this->owner->updateIndex();
   }
   /**
    * onAfterUnpublish
    *
    * @return void
-  **/
+   **/
   public function onAfterUnpublish()
   {
-      $this->owner->deleteIndex();
+    $this->owner->deleteIndex();
   }
   /**
    * onAfterDelete
    *
    * @return void
-  **/
+   **/
   public function onAfterDelete()
   {
-      $this->owner->deleteIndex();
+    $this->owner->deleteIndex();
   }
 }
-
