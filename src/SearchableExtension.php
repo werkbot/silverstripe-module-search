@@ -81,11 +81,16 @@ class SearchableExtension extends DataExtension
    **/
   public function getSearchableSummary()
   {
+    $content = "";
     if ($this->owner->SearchableExtension_Summary_ColumnName) {
-      return $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+      $content = $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
     } else {
-      return $this->owner->Content;
+      $content = $this->owner->Content;
     }
+
+    $this->owner->extend('updateSearchableSummary', $content);
+
+    return $content;
   }
   /**
    * getSearchableContent
