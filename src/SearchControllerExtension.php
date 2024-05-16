@@ -2,20 +2,21 @@
 
 namespace Werkbot\Search;
 
-use SilverStripe\CMS\Search\SearchForm;
-use SilverStripe\Control\HTTPRequest;
+use SilverStripe\ORM\ArrayList;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Forms\FormAction;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\PaginatedList;
-use SilverStripe\ORM\ValidationResult;
-use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
 use Werkbot\Search\TNTSearchHelper;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\SiteConfig\SiteConfig;
+use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
 
 class SearchControllerExtension extends DataExtension
 {
@@ -119,10 +120,13 @@ class SearchControllerExtension extends DataExtension
 
     $tnt = TNTSearchHelper::Instance()->getTNTSearch();
     $tnt->selectIndex('site.index');
-    $res = $tnt->searchBoolean($search);
-
-    //if no results with boolean search, do a regular search
-    if (empty($res['ids'])) {
+    if (SiteConfig::current_site_config()->EnableBooleanSearch) {
+      $res = $tnt->searchBoolean($search);
+      //if no results with boolean search, do a regular search
+      if (empty($res['ids'])) {
+        $res = $tnt->search($search, 1000);
+      }
+    } else {
       $res = $tnt->search($search, 1000);
     }
 
@@ -133,11 +137,15 @@ class SearchControllerExtension extends DataExtension
     }
 
     foreach ($res['ids'] as $result) {
-      $parts = explode("_", $result);
-      if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
-        $results->push($obj);
+      if ($result) {
+        $parts = explode("_", $result);
+        if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
+          $results->push($obj);
+        }
       }
     }
+
+    $results->removeDuplicates('getSearchableID');
 
     return $results;
   }
