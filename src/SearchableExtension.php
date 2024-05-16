@@ -52,7 +52,7 @@ class SearchableExtension extends DataExtension
    */
   public function getSearchableID()
   {
-    return $this->owner->ID;
+    return $this->owner->ClassName . "_" . $this->owner->ID;
   }
   /**
    * getSearchableTitle
