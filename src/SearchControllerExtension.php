@@ -136,11 +136,24 @@ class SearchControllerExtension extends DataExtension
       $classlist[ClassInfo::shortName($value)] = $value;
     }
 
-    foreach ($res['ids'] as $result) {
-      if ($result) {
-        $parts = explode("_", $result);
+    if (isset($res["docScores"])) {
+      $docScores = $res['docScores'];
+      uasort($docScores, function ($a, $b) {
+        return abs($a) < abs($b) ? 1 : -1;
+      });
+      foreach ($docScores as $id => $score) {
+        $parts = explode("_", $id);
         if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
           $results->push($obj);
+        }
+      }
+    } else {
+      foreach ($res['ids'] as $result) {
+        if ($result) {
+          $parts = explode("_", $result);
+          if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
+            $results->push($obj);
+          }
         }
       }
     }
