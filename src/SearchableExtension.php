@@ -44,6 +44,17 @@ class SearchableExtension extends DataExtension
     return false;
   }
   /**
+   * getSearchableID
+   * Returns the ID to be used in search results, for objects that are apart of a page this can be
+   * overridden to return the Page ID - which can then be used to remove duplicates from search results
+   *
+   * @return int
+   */
+  public function getSearchableID()
+  {
+    return $this->owner->ClassName . "_" . $this->owner->ID;
+  }
+  /**
    * getSearchableTitle
    * Returns the title, to be used in search results
    * Override if Title uses a different variable name
@@ -81,11 +92,16 @@ class SearchableExtension extends DataExtension
    **/
   public function getSearchableSummary()
   {
+    $content = "";
     if ($this->owner->SearchableExtension_Summary_ColumnName) {
-      return $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+      $content = $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
     } else {
-      return $this->owner->Content;
+      $content = $this->owner->Content;
     }
+
+    $this->owner->extend('updateSearchableSummary', $content);
+
+    return $content;
   }
   /**
    * getSearchableContent
