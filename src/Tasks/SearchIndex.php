@@ -2,7 +2,6 @@
 
 namespace Werkbot\Search\Tasks;
 
-use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
