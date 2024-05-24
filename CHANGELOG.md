@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.2 - 2024-05-24
+## 🐛 Bugfixes
+- added check for docScores id in search results
+
+## 🏗️ Build System
+- updated workflow files
+
+
+
 ## 2.0.1 - 2024-05-16
 
 
