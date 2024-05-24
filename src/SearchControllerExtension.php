@@ -142,9 +142,11 @@ class SearchControllerExtension extends DataExtension
         return abs($a) < abs($b) ? 1 : -1;
       });
       foreach ($docScores as $id => $score) {
-        $parts = explode("_", $id);
-        if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
-          $results->push($obj);
+        if ($id) {
+          $parts = explode("_", $id);
+          if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
+            $results->push($obj);
+          }
         }
       }
     } else {
