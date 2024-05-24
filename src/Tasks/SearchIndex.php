@@ -5,7 +5,7 @@ namespace Werkbot\Search\Tasks;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
-use Werkbot\Search\TNTSearchHelper;
+use Werkbot\Search\Helpers\TNTSearchHelper;
 
 class SearchIndex extends BuildTask
 {
