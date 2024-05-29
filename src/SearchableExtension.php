@@ -2,12 +2,34 @@
 
 namespace Werkbot\Search;
 
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\FieldGroup;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig;
+use SilverStripe\Forms\GridField\GridFieldButtonRow;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use SilverStripe\Forms\GridField\GridFieldToolbarHeader;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
+use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
 
 class SearchableExtension extends DataExtension
 {
+  private static $has_many = [
+    'SearchTerms' => SearchTerm::class . '.SearchTermOf',
+  ];
+
+  private static $owns = [
+    'SearchTerms',
+  ];
+
   /*
     Column names for the "Title" and "Content" search fields
     Override these to set them to a different column name
@@ -19,6 +41,52 @@ class SearchableExtension extends DataExtension
     "getSearchableTitle" => "Text",
     "getSearchableSummary" => 'HTMLText',
   ];
+
+  /**
+   * updateSettingsFields
+   * Adds the SearchTerms GridField to the settings tab
+   * This should only be applied to SiteTree objects
+   *
+   * @param FieldList $fields
+   * @return void
+   **/
+  public function updateSettingsFields(FieldList $fields)
+  {
+    $fields->addFieldToTab('Root', new TabSet('Search', new Tab('Main')));
+
+    if ($this->owner->hasField("ShowInSearch")) {
+      $fields->removeByName('ShowInSearch');
+      $ShowInSearch = CheckboxField::create("ShowInSearch", $this->owner->fieldLabel('ShowInSearch'));
+      $ShowInSearchGroup = FieldGroup::create(
+        'Settings',
+        $ShowInSearch
+      );
+      $fields->addFieldToTab('Root.Search.Main', $ShowInSearchGroup);
+    }
+
+    $SearchTermsGridField = GridField::create(
+      'SearchTerms',
+      'Enter Search Terms',
+      $this->owner->SearchTerms(),
+      GridFieldConfig::create()
+        ->addComponent(GridFieldButtonRow::create('before'))
+        ->addComponent(GridFieldToolbarHeader::create())
+        ->addComponent(GridFieldEditableColumns::create())
+        ->addComponent(GridFieldDeleteAction::create())
+        ->addComponent(GridFieldAddNewInlineButton::create())
+        ->addComponent(new GridFieldOrderableRows('SortOrder'))
+    );
+
+    $SearchTermsGridField->getConfig()->getComponentByType(GridFieldEditableColumns::class)->setDisplayFields(array(
+      'SearchTermText'  => function ($record, $column, $grid) {
+        return TextField::create($column)
+          ->setAttribute('placeholder', 'Enter search term');
+      }
+    ));
+
+    $fields->addFieldToTab('Root.Search.Main', $SearchTermsGridField);
+  }
+
   /**
    * getIndexQuery
    * This query is used when building the index
@@ -36,6 +104,10 @@ class SearchableExtension extends DataExtension
         SiteTree
       ON
         SiteTree.ID = Page.ID
+      LEFT JOIN
+        SearchTerm
+      ON
+        SearchTerm.SearchTermOfID = Page.ID  AND SearchTerm.SearchTermOfClass = SiteTree.ClassName
       WHERE
         SiteTree.ShowInSearch = '1'";
    **/
