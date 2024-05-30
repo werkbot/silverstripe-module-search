@@ -5,6 +5,7 @@ namespace Werkbot\Search;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\FieldGroup;
@@ -41,7 +42,21 @@ class SearchableExtension extends DataExtension
     "getSearchableTitle" => "Text",
     "getSearchableSummary" => 'HTMLText',
   ];
-
+  /**
+   * updateCMSFields
+   * Adds the SearchTerms GridField to the CMS tab
+   * This should only be applied to Data objects
+   *
+   * @param FieldList $fields
+   * @return void
+   **/
+  public function updateCMSFields(FieldList $fields)
+  {
+    if (DataObject::getSchema()->baseDataClass($this->owner->ClassName) != "SilverStripe\CMS\Model\SiteTree") {
+      $this->addSearchSettingFields($fields);
+    }
+    parent::updateCMSFields($fields);
+  }
   /**
    * updateSettingsFields
    * Adds the SearchTerms GridField to the settings tab
@@ -51,6 +66,13 @@ class SearchableExtension extends DataExtension
    * @return void
    **/
   public function updateSettingsFields(FieldList $fields)
+  {
+    if (DataObject::getSchema()->baseDataClass($this->owner->ClassName) == "SilverStripe\CMS\Model\SiteTree") {
+      $this->addSearchSettingFields($fields);
+    }
+  }
+
+  public function addSearchSettingFields(FieldList &$fields)
   {
     $fields->addFieldToTab('Root', new TabSet('Search', new Tab('Main')));
 
