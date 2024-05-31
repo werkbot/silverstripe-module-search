@@ -209,7 +209,17 @@ class SearchableExtension extends DataExtension
    **/
   public function getSearchableContent()
   {
-    return $this->getSearchableSummary();
+    $content = "";
+    foreach ($this->owner->SearchTerms() as $term) {
+      $content .= $term->SearchTermText . " ";
+    }
+    if ($this->owner->SearchableExtension_Summary_ColumnName) {
+      $content .= $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+    } else {
+      $content .= $this->owner->Content;
+    }
+
+    return $content;
   }
   /**
    * getSearchableSummaryColumnName
