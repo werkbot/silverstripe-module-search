@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.3 - 2024-06-03
+
+
+
+
 ## 2.0.2 - 2024-05-24
 ## 🐛 Bugfixes
 - added check for docScores id in search results
