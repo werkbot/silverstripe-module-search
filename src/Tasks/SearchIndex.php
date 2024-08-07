@@ -24,11 +24,10 @@ class SearchIndex extends BuildTask
     foreach ($classes as $title => $className) {
       $searchableClass = singleton($className);
       if ($query = $searchableClass->getIndexQuery()) {
+        DB::alteration_message('Indexing...' . $className, 'created');
         $indexer->query($query);
         $indexer->run();
-        DB::alteration_message('Indexing...' . $className, 'created');
       }
     }
   }
 }
-
