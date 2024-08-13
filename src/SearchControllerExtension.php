@@ -68,7 +68,7 @@ class SearchControllerExtension extends DataExtension
    *
    * @param array $searchdata The raw request data submitted by user
    * @param SiteSearchForm $form The form instance that was submitted
-   * @param HTTPRequest $request Request generated for this action
+   * @return string - Rendered search results HTML
    **/
   public function SiteSearchFormResults($searchdata, $form)
   {
