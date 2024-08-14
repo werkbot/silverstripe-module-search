@@ -1,6 +1,6 @@
 <?php
 
-namespace Werkbot\Search;
+namespace Werkbot\Search\SearchQueries;
 
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\ArrayList;
@@ -15,19 +15,19 @@ class CustomSideReport_SearchQuery extends Report
   {
     return 'Search Query Report';
   }
-  
+
   public function description()
   {
     $desc = 'Shows search queries';
 
     return $desc;
   }
-  
+
   public function sort()
   {
     return 1;
   }
-  
+
   public function records($params = null)
   {
     if ($params){
@@ -63,13 +63,13 @@ class CustomSideReport_SearchQuery extends Report
 
     return $records;
   }
-  
+
   public function sourceRecords($params = null)
   {
     $params = ((isset($_REQUEST['filters'])) ? $_REQUEST['filters'] : null);
     return $this->records($params);
   }
-  
+
   public function columns()
   {
     $fields = [
@@ -86,8 +86,8 @@ class CustomSideReport_SearchQuery extends Report
 
     return $fields;
   }
-  
-  public function parameterFields() 
+
+  public function parameterFields()
   {
     $today = date('Y-m-d');
 
@@ -107,3 +107,4 @@ class CustomSideReport_SearchQuery extends Report
     );
   }
 }
+

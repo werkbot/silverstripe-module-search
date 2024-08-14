@@ -1,6 +1,6 @@
 <?php
 
-namespace Werkbot\Search;
+namespace Werkbot\Search\Jobs;
 
 use SilverStripe\Core\Config\Configurable;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
@@ -68,3 +68,4 @@ class RemoveSearchQueriesJob extends AbstractQueuedJob
     QueuedJobService::singleton()->queueJob(new RemoveSearchQueriesJob(), date('Y-m-d', strtotime($queueNextRun)));
   }
 }
+
