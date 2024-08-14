@@ -2,21 +2,21 @@
 
 namespace Werkbot\Search;
 
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\PaginatedList;
-use Werkbot\Search\TNTSearchHelper;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\ValidationResult;
-use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\PaginatedList;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\SiteConfig\SiteConfig;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
+use Werkbot\Search\Helpers\TNTSearchHelper;
 
 class SearchControllerExtension extends DataExtension
 {
@@ -66,9 +66,9 @@ class SearchControllerExtension extends DataExtension
   /**
    * Process and render search results.
    *
-   * @param array $data The raw request data submitted by user
+   * @param array $searchdata The raw request data submitted by user
    * @param SiteSearchForm $form The form instance that was submitted
-   * @param HTTPRequest $request Request generated for this action
+   * @return string - Rendered search results HTML
    **/
   public function SiteSearchFormResults($searchdata, $form)
   {
