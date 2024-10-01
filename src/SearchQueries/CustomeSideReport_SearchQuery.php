@@ -15,19 +15,19 @@ class CustomSideReport_SearchQuery extends Report
   {
     return 'Search Query Report';
   }
-  
+
   public function description()
   {
     $desc = 'Shows search queries';
 
     return $desc;
   }
-  
+
   public function sort()
   {
     return 1;
   }
-  
+
   public function records($params = null)
   {
     if ($params){
@@ -40,13 +40,15 @@ class CustomSideReport_SearchQuery extends Report
 
     $records = new ArrayList();
     $sql = "
-      SELECT
-        Created, Query, COUNT(*) AS QueryCount
+       SELECT
+        Max(Created) as Created, Query, COUNT(*) AS QueryCount
       FROM
         SearchQuery
       WHERE
         Created BETWEEN '".$StartDate."' AND '".$EndDate."'
       GROUP BY
+        Query
+      ORDER BY
         Query ASC
     ";
     $results = DB::query($sql);
@@ -63,13 +65,13 @@ class CustomSideReport_SearchQuery extends Report
 
     return $records;
   }
-  
+
   public function sourceRecords($params = null)
   {
     $params = ((isset($_REQUEST['filters'])) ? $_REQUEST['filters'] : null);
     return $this->records($params);
   }
-  
+
   public function columns()
   {
     $fields = [
@@ -86,8 +88,8 @@ class CustomSideReport_SearchQuery extends Report
 
     return $fields;
   }
-  
-  public function parameterFields() 
+
+  public function parameterFields()
   {
     $today = date('Y-m-d');
 
