@@ -133,7 +133,9 @@ class SearchableExtension extends DataExtension
       ON
         SearchTerm.SearchTermOfID = Page.ID  AND SearchTerm.SearchTermOfClass = SiteTree.ClassName
       WHERE
-        SiteTree.ShowInSearch = '1'";
+        SiteTree.ShowInSearch = '1'"
+      AND
+        SiteTree.Content IS NOT NULL;
    **/
   public function getIndexQuery()
   {
