@@ -135,6 +135,8 @@ class SearchControllerExtension extends DataExtension
     $classlist = [];
     $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
     foreach ($classes as $key => $value) {
+      // Map fully qualified and short class names
+      $classlist[$value] = $value;
       $classlist[ClassInfo::shortName($value)] = $value;
     }
 
