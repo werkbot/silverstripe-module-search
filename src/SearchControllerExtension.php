@@ -18,6 +18,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
 use Werkbot\Search\Helpers\TNTSearchHelper;
 use Werkbot\Search\SearchQueries\SearchQuery;
+use Werkbot\Search\SearchableExtension;
 
 class SearchControllerExtension extends DataExtension
 {
