@@ -6,6 +6,7 @@ use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 use Werkbot\Search\Helpers\TNTSearchHelper;
+use Werkbot\Search\SearchableExtension;
 
 class SearchIndex extends BuildTask
 {
