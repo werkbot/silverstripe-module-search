@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.0 - 2024-10-24
+## 🎉 New Features
+- psr-4 and psr-12 ([#45](https://github.com/werkbot/silverstripe-module-search/pull/45) by [tiller1010](https://github.com/tiller1010))
+- map fully qualified class names in addition to short names
+
+## 🐛 Bugfixes
+- imported missing search queries class
+- added missing searchable extension
+- included missing search extension in index task
+
+## 📚 Documentation Changes
+- updated docs
+
+
+
 ## 2.0.5 - 2024-10-02
 
 
