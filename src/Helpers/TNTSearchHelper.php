@@ -1,11 +1,10 @@
 <?php
 
-namespace Werkbot\Search;
+namespace Werkbot\Search\Helpers;
 
 use TeamTNT\TNTSearch\TNTSearch;
 use SilverStripe\Core\Environment;
 
-/**/
 class TNTSearchHelper
 {
   /*
@@ -58,3 +57,4 @@ class TNTSearchHelper
       return $indexer;
   }
 }
+

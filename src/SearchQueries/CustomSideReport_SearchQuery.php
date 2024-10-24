@@ -1,6 +1,6 @@
 <?php
 
-namespace Werkbot\Search;
+namespace Werkbot\Search\SearchQueries;
 
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\ArrayList;
@@ -109,3 +109,4 @@ class CustomSideReport_SearchQuery extends Report
     );
   }
 }
+
