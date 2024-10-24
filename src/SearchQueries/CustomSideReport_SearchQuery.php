@@ -40,13 +40,15 @@ class CustomSideReport_SearchQuery extends Report
 
     $records = new ArrayList();
     $sql = "
-      SELECT
-        Created, Query, COUNT(*) AS QueryCount
+       SELECT
+        Max(Created) as Created, Query, COUNT(*) AS QueryCount
       FROM
         SearchQuery
       WHERE
         Created BETWEEN '".$StartDate."' AND '".$EndDate."'
       GROUP BY
+        Query
+      ORDER BY
         Query ASC
     ";
     $results = DB::query($sql);

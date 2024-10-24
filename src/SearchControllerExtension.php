@@ -17,6 +17,8 @@ use SilverStripe\ORM\ValidationResult;
 use SilverStripe\SiteConfig\SiteConfig;
 use TeamTNT\TNTSearch\Exceptions\IndexNotFoundException;
 use Werkbot\Search\Helpers\TNTSearchHelper;
+use Werkbot\Search\SearchQueries\SearchQuery;
+use Werkbot\Search\SearchableExtension;
 
 class SearchControllerExtension extends DataExtension
 {
@@ -100,12 +102,13 @@ class SearchControllerExtension extends DataExtension
     $Paged = new PaginatedList($Results, $this->owner->getRequest());
     $Paged->setPageLength($pageLength);
     $Paged->setPageStart($start);
-    $data = array(
+    $data = [
       'Results' => $Paged,
       'Query' => DBField::create_field('Text', $form->getSearchQuery()),
       'Title' => _t('SilverStripe\\CMS\\Search\\SiteSearchForm.SearchResults', 'Search Results')
-    );
-    return $this->owner->customise($data)->renderWith(array('SearchableResultsPage', 'Page'));
+    ];
+
+    return $this->owner->customise($data)->renderWith(['SearchableResultsPage', 'Page']);
   }
 
   /**
@@ -133,6 +136,8 @@ class SearchControllerExtension extends DataExtension
     $classlist = [];
     $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
     foreach ($classes as $key => $value) {
+      // Map fully qualified and short class names
+      $classlist[$value] = $value;
       $classlist[ClassInfo::shortName($value)] = $value;
     }
 
@@ -164,4 +169,6 @@ class SearchControllerExtension extends DataExtension
 
     return $results;
   }
+
 }
+
