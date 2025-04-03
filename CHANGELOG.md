@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.1 - 2025-04-03
+## 🎉 New Features
+- psr-4 and psr-12 ([#45](https://github.com/werkbot/silverstripe-module-search/pull/45) by [tiller1010](https://github.com/tiller1010))
+
+
+
 ## 3.0.0 - 2024-10-24
 ## 🎉 New Features
 - psr-4 and psr-12 ([#45](https://github.com/werkbot/silverstripe-module-search/pull/45) by [tiller1010](https://github.com/tiller1010))
