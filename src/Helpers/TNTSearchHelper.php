@@ -2,11 +2,14 @@
 
 namespace Werkbot\Search\Helpers;
 
-use TeamTNT\TNTSearch\TNTSearch;
 use SilverStripe\Core\Environment;
+use SilverStripe\Core\Extensible;
+use TeamTNT\TNTSearch\TNTSearch;
 
 class TNTSearchHelper
 {
+  use Extensible;
+
   /*
     Call this method to return a singleton
   */
@@ -47,14 +50,23 @@ class TNTSearchHelper
   public function getTNTSearchIndex($create = false)
   {
       $tnt = $this->getTNTSearch();
+      $indexName = $this->getIndexName();
       if ($create) {
-          $indexer = $tnt->createIndex('site.index');
+          $indexer = $tnt->createIndex($indexName);
       } else {
-          $tnt->selectIndex('site.index');
+          $tnt->selectIndex($indexName);
           $indexer = $tnt->getIndex();
       }
       $indexer->setPrimaryKey('ID');
       return $indexer;
   }
+
+  public function getIndexName()
+  {
+    $name = 'site.index';
+    $this->extend('updateSearchIndexName', $name);
+    return $name;
+  }
+
 }
 
