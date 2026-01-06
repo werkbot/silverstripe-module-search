@@ -118,8 +118,9 @@ class SearchControllerExtension extends DataExtension
   {
     $results = ArrayList::create();
 
-    $tnt = TNTSearchHelper::Instance()->getTNTSearch();
-    $tnt->selectIndex('site.index');
+    $tntSearchHelper = TNTSearchHelper::Instance();
+    $tnt = $tntSearchHelper->getTNTSearch();
+    $tnt->selectIndex($tntSearchHelper->getIndexName());
     if (SiteConfig::current_site_config()->EnableBooleanSearch) {
       $res = $tnt->searchBoolean($search);
       //if no results with boolean search, do a regular search
