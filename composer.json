@@ -5,12 +5,12 @@
   "license": "MIT",
   "homepage": "https://github.com/werkbot/silverstripe-module-search",
   "require": {
-    "php": "^8.0 || ^8.1",
-    "silverstripe/cms": "^4 || ^5",
-    "silverstripe/framework": "^4 || ^5",
-    "teamtnt/tntsearch": "v4.2.1",
+    "php": "^8.3",
+    "silverstripe/cms": "^6",
+    "silverstripe/framework": "^6",
+    "teamtnt/tntsearch": "^5",
     "ext-sqlite3": "*",
-    "symbiote/silverstripe-queuedjobs": "^4.12 || ^5.1"
+    "symbiote/silverstripe-queuedjobs": "^6.1"
   },
   "require-dev": {
     "code-lts/doctum": "^5.5"
