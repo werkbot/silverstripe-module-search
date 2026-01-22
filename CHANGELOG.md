@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.2 - 2026-01-22
+## 🎉 New Features
+- extension point to update search index file name
+
+
+
 ## 3.0.1 - 2025-04-03
 ## 🎉 New Features
 - psr-4 and psr-12 ([#45](https://github.com/werkbot/silverstripe-module-search/pull/45) by [tiller1010](https://github.com/tiller1010))
