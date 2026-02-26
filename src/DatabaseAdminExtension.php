@@ -2,15 +2,15 @@
 
 namespace Werkbot\Search;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Control\Controller;
-use SilverStripe\ORM\DataExtension;
 use Werkbot\Search\Tasks\SearchIndex;
 
-class DatabaseAdminExtension extends DataExtension
+class DatabaseAdminExtension extends Extension
 {
   public function onAfterBuild()
   {
-    (new SearchIndex())->run(Controller::curr()->getRequest());
+    (SearchIndex::create())->run(Controller::curr()->getRequest());
   }
 }
 

@@ -13,11 +13,19 @@
     "symbiote/silverstripe-queuedjobs": "^6.1"
   },
   "require-dev": {
-    "code-lts/doctum": "^5.5"
+    "code-lts/doctum": "^5.5",
+    "wernerkrauss/silverstripe-rector": "^1",
+    "phpunit/phpunit": "^11.5"
   },
   "autoload": {
     "psr-4": {
       "Werkbot\\Search\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "silverstripe/vendor-plugin": true
     }
   }
 }
