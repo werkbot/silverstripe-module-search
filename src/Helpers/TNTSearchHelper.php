@@ -2,6 +2,7 @@
 
 namespace Werkbot\Search\Helpers;
 
+use TeamTNT\TNTSearch\Stemmer\PorterStemmer;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Extensible;
 use TeamTNT\TNTSearch\TNTSearch;
@@ -37,7 +38,7 @@ class TNTSearchHelper
         'username'  => Environment::getEnv('SS_DATABASE_USERNAME'),
         'password'  => Environment::getEnv('SS_DATABASE_PASSWORD'),
         'storage'   => dirname(__DIR__, 5).'/search',
-        'stemmer'   => \TeamTNT\TNTSearch\Stemmer\PorterStemmer::class
+        'stemmer'   => PorterStemmer::class
       ]);
       return $tnt;
   }

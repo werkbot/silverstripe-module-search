@@ -2,12 +2,12 @@
 
 namespace Werkbot\Search;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FieldGroup;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\CheckboxField;
 
-class SearchSiteConfigExtension extends DataExtension
+class SearchSiteConfigExtension extends Extension
 {
   private static $db = [
     'EnableBooleanSearch' =>  'Boolean',

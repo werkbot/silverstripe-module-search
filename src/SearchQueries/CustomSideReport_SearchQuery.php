@@ -2,20 +2,23 @@
 
 namespace Werkbot\Search\SearchQueries;
 
+use Override;
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\Reports\Report;
-use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\FieldList;
 
 class CustomSideReport_SearchQuery extends Report
 {
+  #[Override]
   public function title()
   {
     return 'Search Query Report';
   }
 
+  #[Override]
   public function description()
   {
     $desc = 'Shows search queries';
@@ -28,6 +31,7 @@ class CustomSideReport_SearchQuery extends Report
     return 1;
   }
 
+  #[Override]
   public function records($params = null)
   {
     if ($params){
@@ -38,7 +42,7 @@ class CustomSideReport_SearchQuery extends Report
       $EndDate = date('Y-m-d')." 23:59:50";
     }
 
-    $records = new ArrayList();
+    $records = ArrayList::create();
     $sql = "
        SELECT
         Max(Created) as Created, Query, COUNT(*) AS QueryCount
@@ -54,13 +58,11 @@ class CustomSideReport_SearchQuery extends Report
     $results = DB::query($sql);
 
     foreach($results as $row){
-      $records->push(new ArrayData(
-        array(
-          'Created' => $row['Created'],
-          'Query' => $row['Query'],
-          'QueryCount' => $row['QueryCount']
-        )
-      ));
+      $records->push(ArrayData::create([
+        'Created' => $row['Created'],
+        'Query' => $row['Query'],
+        'QueryCount' => $row['QueryCount']
+      ]));
     }
 
     return $records;
@@ -68,10 +70,11 @@ class CustomSideReport_SearchQuery extends Report
 
   public function sourceRecords($params = null)
   {
-    $params = ((isset($_REQUEST['filters'])) ? $_REQUEST['filters'] : null);
+    $params = ($_REQUEST['filters'] ?? null);
     return $this->records($params);
   }
 
+  #[Override]
   public function columns()
   {
     $fields = [
