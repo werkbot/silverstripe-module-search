@@ -2,10 +2,11 @@
 
 namespace Werkbot\Search\Helpers;
 
-use TeamTNT\TNTSearch\Stemmer\PorterStemmer;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Extensible;
+use TeamTNT\TNTSearch\Stemmer\PorterStemmer;
 use TeamTNT\TNTSearch\TNTSearch;
+use Werkbot\Search\Engines\SqliteEngine_WithStringID;
 
 class TNTSearchHelper
 {
@@ -38,7 +39,8 @@ class TNTSearchHelper
         'username'  => Environment::getEnv('SS_DATABASE_USERNAME'),
         'password'  => Environment::getEnv('SS_DATABASE_PASSWORD'),
         'storage'   => dirname(__DIR__, 5).'/search',
-        'stemmer'   => PorterStemmer::class
+        'stemmer'   => PorterStemmer::class,
+        'engine'    => SqliteEngine_WithStringID::class,
       ]);
       return $tnt;
   }
