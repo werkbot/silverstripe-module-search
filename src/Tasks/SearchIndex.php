@@ -14,7 +14,7 @@ use Werkbot\Search\SearchableExtension;
 class SearchIndex extends BuildTask
 {
   protected string $title = "Search Index";
-  protected static string $description = "";
+  protected static string $description = "Index DataObjects with SearchableExtension";
   protected $enabled = true;
 
   #[Override]
