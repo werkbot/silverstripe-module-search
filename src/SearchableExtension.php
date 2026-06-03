@@ -135,7 +135,9 @@ class SearchableExtension extends DataExtension
    **/
   public function getIndexQuery()
   {
-    return false;
+    $query = '';
+    $this->owner->extend('updateIndexQuery', $query);
+    return $query;
   }
   /**
    * getSearchableID
