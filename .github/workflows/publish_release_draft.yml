@@ -115,7 +115,7 @@ jobs:
       - name: Create Pull Request
         id: create_pr
         if: steps.is_support_branch.outputs.filtered_branch_name == ''
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v7
         with:
           title: Auto-Update CHANGELOG.md
           commit-message: Updated CHANGELOG.md
