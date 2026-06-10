@@ -11,7 +11,7 @@ use Werkbot\Search\SearchableExtension;
 class SearchIndex extends BuildTask
 {
   protected $title = "Search Index";
-  protected $description = "";
+  protected $description = "Index DataObjects with SearchableExtension";
   protected $enabled = true;
 
   public function run($request)
@@ -20,15 +20,29 @@ class SearchIndex extends BuildTask
       mkdir(dirname(__DIR__, 5) . '/search');
       echo "Created search folder<br /><br />";
     }
+
     $indexer = TNTSearchHelper::Instance()->getTNTSearchIndex(true);
     $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
+
+    $query = '';
     foreach ($classes as $title => $className) {
       $searchableClass = singleton($className);
-      if ($query = $searchableClass->getIndexQuery()) {
+      if ($classQuery = $searchableClass->getIndexQuery()) {
+        // Remove semi-colon if it exists
+        $classQuery = rtrim($classQuery, ';');
+
+        $query .= $classQuery . ' UNION ALL ';
+
         DB::alteration_message('Indexing...' . $className, 'created');
-        $indexer->query($query);
-        $indexer->run();
       }
     }
+    $query = str_replace('"', "'", $query);
+
+    // Remove last " UNION ALL "
+    $query = substr($query, 0, -11);
+
+    $indexer->query($query);
+    $indexer->run();
   }
+
 }

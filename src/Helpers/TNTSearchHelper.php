@@ -39,6 +39,7 @@ class TNTSearchHelper
         'storage'   => dirname(__DIR__, 5).'/search',
         'stemmer'   => \TeamTNT\TNTSearch\Stemmer\PorterStemmer::class
       ]);
+      $tnt->engine->steps = 99999;
       return $tnt;
   }
 
