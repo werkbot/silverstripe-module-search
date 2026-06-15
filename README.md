@@ -31,21 +31,35 @@ The `Page::class` will need to have a function `getIndexQuery` defined. Here is 
  */
 public function getIndexQuery()
 {
-  return "SELECT
-      concat(\"Page_\", SiteTree.ID) AS ID,
-      SiteTree.ClassName,
-      SiteTree.Title,
-      SiteTree.Content
+  $class = get_class($this);
+  $class = str_replace('\\', '\\\\', $class);
+
+  /*
+    Alternatively, just use the short class name of the current file
+    Example: "Page"
+  */
+  $indexQueryDeclaringClassShortname = $this->owner->getIndexQueryDeclaringClassShortname();
+
+  return <<<SQL
+    SELECT
+      concat("{$indexQueryDeclaringClassShortname}_", SiteTree_Live.ID) AS ID,
+      SiteTree_Live.ClassName,
+      SiteTree_Live.Title,
+      SiteTree_Live.Content
     FROM
       Page
     LEFT JOIN
-      SiteTree
+      SiteTree_Live
     ON
-      SiteTree.ID = Page.ID
+      SiteTree_Live.ID = Page.ID
     WHERE
-      SiteTree.ShowInSearch = '1'"
+      SiteTree_Live.ShowInSearch = '1'
     AND
-      SiteTree.Content IS NOT NULL;
+      -- Keeps subclasses from re-indexing duplicates
+      SiteTree_Live.ClassName = '$class'
+    AND
+      SiteTree_Live.Content IS NOT NULL
+  SQL;
 }
 ```
 This is a simple query that is used by the indexer to index your content.

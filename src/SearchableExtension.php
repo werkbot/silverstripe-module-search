@@ -144,6 +144,7 @@ class SearchableExtension extends DataExtension
     $this->owner->extend('updateIndexQuery', $query);
     return $query;
   }
+
   /**
    * getSearchableID
    * Returns the ID to be used in search results, for objects that are apart of a page this can be
@@ -153,7 +154,7 @@ class SearchableExtension extends DataExtension
    */
   public function getSearchableID()
   {
-    return $this->owner->ClassName . "_" . $this->owner->ID;
+    return $this->getIndexQueryDeclaringClassShortname() . "_" . $this->owner->ID;
   }
 
   /**
@@ -249,12 +250,24 @@ class SearchableExtension extends DataExtension
   }
 
   /**
-   * Get the ID used in the search index
+   * Get the class that defines the getIndexQuery method
+   * This is used to determine the class name prefix for the ID field in the search index
    * @return string
    */
-  public function getIndexID()
+  public function getIndexQueryDeclaringClass()
   {
-    return ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID;
+    $definesGetIndexQuery = new \ReflectionMethod($this->owner, 'getIndexQuery');
+    return $definesGetIndexQuery->getDeclaringClass()->getName();
+  }
+
+  /**
+   * Get the short name of the class that defines the getIndexQuery method
+   * This is used to determine the class name prefix for the ID field in the search index
+   * @return string
+   */
+  public function getIndexQueryDeclaringClassShortname()
+  {
+    return ClassInfo::shortName($this->owner->getIndexQueryDeclaringClass());
   }
 
   /**
@@ -264,7 +277,7 @@ class SearchableExtension extends DataExtension
    */
   public function getIndexDocument()
   {
-    $id = $this->getIndexID();
+    $id = $this->getSearchableID();
     $classQuery = rtrim($this->owner->getIndexQuery(), ';');
     $query = <<<SQL
       SELECT * FROM (
@@ -299,7 +312,7 @@ class SearchableExtension extends DataExtension
   {
     $document = $this->getIndexDocument();
     if (!$document) return;
-    $id = $this->getIndexID();
+    $id = $this->getSearchableID();
     $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
     $index->update($id, $document);
   }
@@ -312,7 +325,7 @@ class SearchableExtension extends DataExtension
   public function deleteIndex()
   {
     $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-    $index->delete($this->getIndexID());
+    $index->delete($this->getSearchableID());
   }
 
   /**
