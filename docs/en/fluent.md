@@ -54,8 +54,7 @@ public function getIndexQuery()
           ' ',
           SiteTree_Localised_Live.Title,
           SiteTree_Localised_Live.MetaDescription,
-          Page_Localised_Live.Desc,
-          Page_Localised_Live.ContentColumnTwo,
+          Page_Localised_Live.TitleContent,
           REGEXP_REPLACE(SiteTree_Localised_Live.Content, '<[^>]*>+', ''),
           REGEXP_REPLACE(GROUP_CONCAT(ContentLayoutHtml_Localised_Live.Content), '<[^>]*>+', '')
         ) AS Content
