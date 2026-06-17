@@ -14,6 +14,7 @@ use SilverStripe\Forms\GridField\GridFieldToolbarHeader;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\DB;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
@@ -139,8 +140,11 @@ class SearchableExtension extends DataExtension
    **/
   public function getIndexQuery()
   {
-    return false;
+    $query = '';
+    $this->owner->extend('updateIndexQuery', $query);
+    return $query;
   }
+
   /**
    * getSearchableID
    * Returns the ID to be used in search results, for objects that are apart of a page this can be
@@ -150,7 +154,7 @@ class SearchableExtension extends DataExtension
    */
   public function getSearchableID()
   {
-    return $this->owner->ClassName . "_" . $this->owner->ID;
+    return $this->getIndexQueryDeclaringClassShortname() . "_" . $this->owner->ID;
   }
 
   /**
@@ -246,24 +250,57 @@ class SearchableExtension extends DataExtension
   }
 
   /**
+   * Get the class that defines the getIndexQuery method
+   * This is used to determine the class name prefix for the ID field in the search index
+   * @return string
+   */
+  public function getIndexQueryDeclaringClass()
+  {
+    $definesGetIndexQuery = new \ReflectionMethod($this->owner, 'getIndexQuery');
+    return $definesGetIndexQuery->getDeclaringClass()->getName();
+  }
+
+  /**
+   * Get the short name of the class that defines the getIndexQuery method
+   * This is used to determine the class name prefix for the ID field in the search index
+   * @return string
+   */
+  public function getIndexQueryDeclaringClassShortname()
+  {
+    return ClassInfo::shortName($this->owner->getIndexQueryDeclaringClass());
+  }
+
+  /**
+   * Get the search index document for this records
+   * This is used when inserting and updating the search index
+   * @return array
+   */
+  public function getIndexDocument()
+  {
+    $id = $this->getSearchableID();
+    $classQuery = rtrim($this->owner->getIndexQuery(), ';');
+    $query = <<<SQL
+      SELECT * FROM (
+        $classQuery
+      ) AS indexquery
+        WHERE
+          ID = '$id'
+    SQL;
+    $query = str_replace('"', "'", $query);
+    return DB::query($query)->record();
+  }
+
+  /**
    * insertIndex
    *
    * @return void
    **/
   public function insertIndex()
   {
-    $content = $this->owner->getSearchableContent();
-    if (!$content) {
-      return;
-    }
-
+    $document = $this->getIndexDocument();
+    if (!$document) return;
     $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-    $index->insert([
-      'ID' => ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID,
-      'ClassName' => $this->owner->ClassName,
-      'Title' => $this->owner->getSearchableTitle(),
-      'Content' => $content,
-    ]);
+    $index->insert($document);
   }
 
   /**
@@ -273,21 +310,11 @@ class SearchableExtension extends DataExtension
    **/
   public function updateIndex()
   {
-    $content = $this->owner->getSearchableContent();
-    if (!$content) {
-      return;
-    }
-
+    $document = $this->getIndexDocument();
+    if (!$document) return;
+    $id = $this->getSearchableID();
     $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-    $index->update(
-      ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID,
-      [
-        'ID' => ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID,
-        'ClassName' => $this->owner->ClassName,
-        'Title' => $this->owner->getSearchableTitle(),
-        'Content' => $content,
-      ]
-    );
+    $index->update($id, $document);
   }
 
   /**
@@ -298,7 +325,7 @@ class SearchableExtension extends DataExtension
   public function deleteIndex()
   {
     $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
-    $index->delete(ClassInfo::shortName($this->owner->ClassName) . "_" . $this->owner->ID);
+    $index->delete($this->getSearchableID());
   }
 
   /**

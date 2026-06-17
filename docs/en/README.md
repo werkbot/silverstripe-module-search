@@ -1,5 +1,4 @@
 ## Usage
-
 ### DataObject Setup
 Just add the extension:
 ```
@@ -7,25 +6,57 @@ DataObject::add_extension(\Werkbot\Search\SearchableExtension::class);
 ```
 
 Then define `getIndexQuery` function on the DataObject:
-```
-public function getIndexQuery(){
-  return "SELECT
-      concat(\"CLASSNAME_\", ID) AS ID,
+```php
+public function getIndexQuery()
+{
+  return <<<SQL
+    SELECT
+      concat("CLASSNAME_", ID) AS ID,
       ClassName,
       Title,
       Content
     FROM
-      CLASSNAME";
+      CLASSNAME
+  SQL;
 }
 ```
 
 In the query, the classname of the dataobject is added to the id, like so: `concat(\"CLASSNAME_\", ID) AS ID`
 So it's the Classname of the DataObject, followed by an underscore, then the ID selector. This is used by the search function (`function SiteSearchFormResults`), it allows us to lookup the objects correctly.
 
-The object will also need to have a `Link` function defined that returns a link. This is used for the search results to link the result to a corresonding page. Here is an example of a dataobject that has a `has_one` relationship with `Page::class`:
+If more searchable content is needed, you can use `CONCAT_WS` to concatenate multiple fields together, for example:
+```sql
+SELECT
+  concat("CLASSNAME_", ID) AS ID,
+  ClassName,
+  Title,
+  CONCAT_WS(' ', Content, ExtraContent) AS Content
 ```
+In this example, the `Content` and `ExtraContent` fields are concatenated together with a space in between. Be sure to alias the concatenated fields as `Content`.
+
+If you would like to add or override the index query with a DataExtension, you can define the `updateIndexQuery` function on the extension, for example:
+```php
+public function updateIndexQuery(&$query)
+{
+  $query = <<<SQL
+    SELECT
+      concat("CLASSNAME_", ID) AS ID,
+      ClassName,
+      Title,
+      Content
+    FROM
+      CLASSNAME
+  SQL;
+}
+```
+
+In this example, the `updateIndexQuery` function is defined on a DataExtension. The function takes the original query reference as an argument, and redefines it.
+
+The object will also need to have a `Link` function defined that returns a link. This is used for the search results to link the result to a corresonding page. Here is an example of a dataobject that has a `has_one` relationship with `Page::class`:
+```php
 /* This returns a link to the Parent Page */
-public function Link(){
+public function Link()
+{
   return $this->Page()->Link();
 }
 ```
