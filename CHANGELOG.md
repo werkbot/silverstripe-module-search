@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.1.0 - 2026-06-17
+## 🎉 New Features
+- added extension point to getIndexQuery
+
+## 🐛 Bugfixes
+- search relevance by using one big query (properly sets total_documents) ([#59](https://github.com/werkbot/silverstripe-module-search/pull/59) by [tiller1010](https://github.com/tiller1010))
+
+## 🔨 Improvements
+- use defined class for index id, updated documentation
+
+
+
 ## 3.0.2 - 2026-01-22
 ## 🎉 New Features
 - extension point to update search index file name
