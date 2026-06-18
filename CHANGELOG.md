@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.1 - 2026-06-18
+
+
+
+
 ## 3.1.0 - 2026-06-17
 ## 🎉 New Features
 - added extension point to getIndexQuery
