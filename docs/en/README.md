@@ -67,6 +67,8 @@ The index is stored in the root directory of your project: `/search/site.index`
 
 The index is initially created on a `dev/build`. Additional `dev/build`'s will update the index for all objects with the extension.
 
+Alternatively, you can run `dev/tasks/Werkbot-Search-Tasks-SearchIndex` to build the index. Here, you can add `?debug` to the task URL to catch any potentially invalid index queries.
+
 For all objects that have the extension applied, the index is updated on creation, edits/updates and delete/removals. So the index is always up to date.
 
 
