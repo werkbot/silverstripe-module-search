@@ -3,6 +3,7 @@
 namespace Werkbot\Search;
 
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldGroup;
 use SilverStripe\Forms\FieldList;
@@ -256,8 +257,28 @@ class SearchableExtension extends DataExtension
    */
   public function getIndexQueryDeclaringClass()
   {
-    $definesGetIndexQuery = new \ReflectionMethod($this->owner, 'getIndexQuery');
-    return $definesGetIndexQuery->getDeclaringClass()->getName();
+    try {
+      $definesGetIndexQuery = new \ReflectionMethod($this->owner, 'getIndexQuery');
+      return $definesGetIndexQuery->getDeclaringClass()->getName();
+    } catch (\ReflectionException $e) {
+      // If the base class does not define getIndexQuery, it may be defined in an Extension
+      return $this->getUpdateQueryDeclaringClass($this->owner->ClassName);
+    }
+  }
+
+  /**
+   * Recursively check extensions for the class with the extension that defines the updateIndexQuery method
+   * @param string $class - The DataOject class name to check for the method
+   * @return string|null - The class name with an extension that defines the updateIndexQuery method
+   */
+  public function getUpdateQueryDeclaringClass($class)
+  {
+    if (!$class) return;
+    $extensions = Config::inst()->get($class, 'extensions', Config::UNINHERITED) ?: [];
+    foreach (array_reverse($extensions) as $extensionClass) {
+      if (method_exists($extensionClass, 'updateIndexQuery')) return $class;
+    }
+    return $this->getUpdateQueryDeclaringClass(get_parent_class($class));
   }
 
   /**
@@ -279,6 +300,7 @@ class SearchableExtension extends DataExtension
   {
     $id = $this->getSearchableID();
     $classQuery = rtrim($this->owner->getIndexQuery(), ';');
+    $classQuery = str_replace('"', "'", $classQuery);
     $query = <<<SQL
       SELECT * FROM (
         $classQuery
@@ -286,7 +308,6 @@ class SearchableExtension extends DataExtension
         WHERE
           ID = '$id'
     SQL;
-    $query = str_replace('"', "'", $query);
     return DB::query($query)->record();
   }
 
