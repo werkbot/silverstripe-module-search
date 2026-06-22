@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.2 - 2026-06-22
+## 🐛 Bugfixes
+- index debug mode, check for updateIndexQuery in dataextensions
+
+## 🔨 Improvements
+- catch error and stop indexing
+
+
+
 ## 3.1.1 - 2026-06-18
 
 
