@@ -36,7 +36,12 @@ class SearchIndex extends BuildTask
 
         if ($debugMode) {
           // Ensure this query is valid by running it before adding it to the indexer
-          DB::query($classQuery);
+          try {
+            DB::query($classQuery);
+          } catch (\SilverStripe\ORM\Connect\DatabaseException $e) {
+            echo "<br>Error in query for class $className: " . $e->getMessage() . '<br>';
+            return;
+          }
         }
 
         $query .= $classQuery . ' UNION ALL ';
