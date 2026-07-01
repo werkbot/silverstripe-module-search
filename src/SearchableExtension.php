@@ -332,7 +332,10 @@ class SearchableExtension extends DataExtension
   public function updateIndex()
   {
     $document = $this->getIndexDocument();
-    if (!$document) return;
+    if (!$document) {
+      $this->deleteIndex();
+      return;
+    }
     $id = $this->getSearchableID();
     $index = TNTSearchHelper::Instance()->getTNTSearchIndex();
     $index->update($id, $document);
@@ -416,8 +419,6 @@ class SearchableExtension extends DataExtension
    **/
   public function onAfterDelete()
   {
-      $this->owner->deleteIndex();
+    $this->owner->deleteIndex();
   }
-
 }
-
