@@ -299,8 +299,12 @@ class SearchableExtension extends DataExtension
   public function getIndexDocument()
   {
     $id = $this->getSearchableID();
+
     $classQuery = rtrim($this->owner->getIndexQuery(), ';');
     $classQuery = str_replace('"', "'", $classQuery);
+
+    if (!$classQuery) return [];
+
     $query = <<<SQL
       SELECT * FROM (
         $classQuery
@@ -308,6 +312,7 @@ class SearchableExtension extends DataExtension
         WHERE
           ID = '$id'
     SQL;
+
     return DB::query($query)->record();
   }
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.4 - 2026-07-14
+## 🐛 Bugfixes
+- check for class query in get doc
+
+
+
 ## 3.1.3 - 2026-07-01
 ## 🐛 Bugfixes
 - delete index entry when document is not foun
