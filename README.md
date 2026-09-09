@@ -41,24 +41,30 @@ public function getIndexQuery()
   $indexQueryDeclaringClassShortname = $this->owner->getIndexQueryDeclaringClassShortname();
 
   return <<<SQL
-    SELECT
-      concat("{$indexQueryDeclaringClassShortname}_", SiteTree_Live.ID) AS ID,
-      SiteTree_Live.ClassName,
-      SiteTree_Live.Title,
-      SiteTree_Live.Content
-    FROM
-      Page
-    LEFT JOIN
-      SiteTree_Live
-    ON
-      SiteTree_Live.ID = Page.ID
-    WHERE
-      SiteTree_Live.ShowInSearch = '1'
-    AND
-      -- Keeps subclasses from re-indexing duplicates
-      SiteTree_Live.ClassName = '$class'
-    AND
-      SiteTree_Live.Content IS NOT NULL
+    SELECT * FROM (
+      SELECT
+        concat("{$indexQueryDeclaringClassShortname}_", SiteTree_Live.ID) AS ID,
+        SiteTree_Live.ClassName,
+        SiteTree_Live.Title,
+        CONCAT_WS(
+          ' ',
+          SiteTree_Live.Title,
+          SiteTree_Live.Content
+        ) as Content
+      FROM
+        Page
+      LEFT JOIN
+        SiteTree_Live
+      ON
+        SiteTree_Live.ID = Page.ID
+      WHERE
+        SiteTree_Live.ShowInSearch = '1'
+      AND
+        -- Keeps subclasses from re-indexing duplicates
+        SiteTree_Live.ClassName = '$class'
+    ) AS BASE
+      WHERE
+        Content != '';
   SQL;
 }
 ```
