@@ -2,13 +2,15 @@
 
 namespace Werkbot\Search\Tasks;
 
-use SilverStripe\ORM\Connect\DatabaseException;
-use SilverStripe\PolyExecution\PolyOutput;
 use Override;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\ORM\Connect\DatabaseException;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Werkbot\Search\Helpers\TNTSearchHelper;
 use Werkbot\Search\SearchableExtension;
 
@@ -26,7 +28,7 @@ class SearchIndex extends BuildTask
       echo "Created search folder<br /><br />";
     }
 
-    $debugMode = $request->getVar('debug') !== null;
+    $debugMode = $input->getOption('debug');
 
     $indexer = TNTSearchHelper::Instance()->getTNTSearchIndex(true);
     $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
@@ -45,7 +47,7 @@ class SearchIndex extends BuildTask
             DB::query($classQuery);
           } catch (DatabaseException $e) {
             echo "<br>Error in query for class $className: " . $e->getMessage() . '<br>';
-            return;
+            return Command::FAILURE;
           }
         }
 
@@ -61,6 +63,15 @@ class SearchIndex extends BuildTask
 
     $indexer->query($query);
     $indexer->run();
+
+    return Command::SUCCESS;
   }
+
+    public function getOptions(): array
+    {
+      return [
+        new InputOption('debug', null, InputOption::VALUE_NONE, 'Debug'),
+      ];
+    }
 
 }
