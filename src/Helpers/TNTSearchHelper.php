@@ -18,9 +18,7 @@ class TNTSearchHelper
   public static function Instance()
   {
       static $inst = null;
-      if ($inst === null) {
-          $inst = new TNTSearchHelper();
-      }
+      $inst ??= new TNTSearchHelper();
       return $inst;
   }
 

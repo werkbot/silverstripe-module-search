@@ -2,6 +2,7 @@
 
 namespace Werkbot\Search\Tasks;
 
+use SilverStripe\ORM\Connect\DatabaseException;
 use SilverStripe\PolyExecution\PolyOutput;
 use Override;
 use SilverStripe\Core\ClassInfo;
@@ -31,7 +32,7 @@ class SearchIndex extends BuildTask
     $classes = ClassInfo::classesWithExtension(SearchableExtension::class);
 
     $query = '';
-    foreach ($classes as $title => $className) {
+    foreach ($classes as $className) {
       $searchableClass = singleton($className);
       if ($classQuery = $searchableClass->getIndexQuery()) {
         // Remove semi-colon if it exists
@@ -42,7 +43,7 @@ class SearchIndex extends BuildTask
           // Ensure this query is valid by running it before adding it to the indexer
           try {
             DB::query($classQuery);
-          } catch (\SilverStripe\ORM\Connect\DatabaseException $e) {
+          } catch (DatabaseException $e) {
             echo "<br>Error in query for class $className: " . $e->getMessage() . '<br>';
             return;
           }

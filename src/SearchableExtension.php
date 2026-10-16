@@ -2,6 +2,8 @@
 
 namespace Werkbot\Search;
 
+use ReflectionMethod;
+use ReflectionException;
 use SilverStripe\Core\Extension;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\ClassInfo;
@@ -140,7 +142,7 @@ class SearchableExtension extends Extension
   public function getIndexQuery()
   {
     $query = '';
-    $this->owner->extend('updateIndexQuery', $query);
+    $this->getOwner()->extend('updateIndexQuery', $query);
     return $query;
   }
 
@@ -153,7 +155,7 @@ class SearchableExtension extends Extension
    */
   public function getSearchableID()
   {
-    return $this->getIndexQueryDeclaringClassShortname() . "_" . $this->owner->ID;
+    return $this->getIndexQueryDeclaringClassShortname() . "_" . $this->getOwner()->ID;
   }
 
   /**
@@ -256,11 +258,11 @@ class SearchableExtension extends Extension
   public function getIndexQueryDeclaringClass()
   {
     try {
-      $definesGetIndexQuery = new \ReflectionMethod($this->owner, 'getIndexQuery');
+      $definesGetIndexQuery = new ReflectionMethod($this->getOwner(), 'getIndexQuery');
       return $definesGetIndexQuery->getDeclaringClass()->getName();
-    } catch (\ReflectionException $e) {
+    } catch (ReflectionException) {
       // If the base class does not define getIndexQuery, it may be defined in an Extension
-      return $this->getUpdateQueryDeclaringClass($this->owner->ClassName);
+      return $this->getUpdateQueryDeclaringClass($this->getOwner()->ClassName);
     }
   }
 
@@ -286,7 +288,7 @@ class SearchableExtension extends Extension
    */
   public function getIndexQueryDeclaringClassShortname()
   {
-    return ClassInfo::shortName($this->owner->getIndexQueryDeclaringClass());
+    return ClassInfo::shortName($this->getOwner()->getIndexQueryDeclaringClass());
   }
 
   /**
@@ -298,7 +300,7 @@ class SearchableExtension extends Extension
   {
     $id = $this->getSearchableID();
 
-    $classQuery = rtrim($this->owner->getIndexQuery(), ';');
+    $classQuery = rtrim($this->getOwner()->getIndexQuery(), ';');
     $classQuery = str_replace('"', "'", $classQuery);
 
     if (!$classQuery) return [];

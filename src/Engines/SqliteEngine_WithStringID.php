@@ -2,6 +2,7 @@
 
 namespace Werkbot\Search\Engines;
 
+use Exception;
 use TeamTNT\TNTSearch\Engines\SqliteEngine;
 use TeamTNT\TNTSearch\Support\Collection;
 
@@ -43,7 +44,7 @@ class SqliteEngine_WithStringID extends SqliteEngine
       $stmt->bindValue(':hits', $term['hits']);
       try {
         $stmt->execute();
-      } catch (\Exception $e) {
+      } catch (Exception $e) {
         //we have a duplicate
         echo $e->getMessage();
       }
