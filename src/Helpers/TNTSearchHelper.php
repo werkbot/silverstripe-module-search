@@ -7,6 +7,7 @@ use SilverStripe\Core\Extensible;
 use TeamTNT\TNTSearch\Stemmer\PorterStemmer;
 use TeamTNT\TNTSearch\TNTSearch;
 use Werkbot\Search\Engines\SqliteEngine_WithStringID;
+use Werkbot\Search\Indexers\TNTIndexer_WithStringID;
 
 class TNTSearchHelper
 {
@@ -57,7 +58,11 @@ class TNTSearchHelper
           $indexer = $tnt->createIndex($indexName);
       } else {
           $tnt->selectIndex($indexName);
-          $indexer = $tnt->getIndex();
+          $indexer = new TNTIndexer_WithStringID($tnt->engine);
+          $indexer->setInMemory(false);
+          $indexer->setIndex($tnt->engine->index);
+          $indexer->setStemmer($tnt->stemmer);
+          $indexer->setTokenizer($tnt->tokenizer);
       }
       $indexer->setPrimaryKey('ID');
       return $indexer;

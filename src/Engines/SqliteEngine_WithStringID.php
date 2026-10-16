@@ -3,6 +3,7 @@
 namespace Werkbot\Search\Engines;
 
 use Exception;
+use PDO;
 use TeamTNT\TNTSearch\Engines\SqliteEngine;
 use TeamTNT\TNTSearch\Support\Collection;
 
@@ -12,6 +13,45 @@ use TeamTNT\TNTSearch\Support\Collection;
  */
 class SqliteEngine_WithStringID extends SqliteEngine
 {
+  /**
+   * Updates a document identified by either an integer or string ID.
+   */
+  public function update(int|string $id, array $document)
+  {
+    $this->delete($id);
+    $this->insert($document);
+  }
+
+  /**
+   * Deletes a document identified by either an integer or string ID.
+   */
+  public function delete(int|string $documentId)
+  {
+    $rows = $this->prepareAndExecuteStatement('SELECT * FROM doclist WHERE doc_id = :documentId;', [
+      ['key' => ':documentId', 'value' => $documentId],
+    ])->fetchAll(PDO::FETCH_ASSOC);
+
+    $updateStmt = $this->index->prepare(
+      'UPDATE wordlist SET num_docs = num_docs - 1, num_hits = num_hits - :hits WHERE id = :term_id;'
+    );
+
+    foreach ($rows as $document) {
+      $updateStmt->bindValue(':hits', $document['hit_count']);
+      $updateStmt->bindValue(':term_id', $document['term_id']);
+      $updateStmt->execute();
+    }
+
+    $result = $this->prepareAndExecuteStatement('DELETE FROM doclist WHERE doc_id = :documentId;', [
+      ['key' => ':documentId', 'value' => $documentId],
+    ]);
+
+    $this->prepareAndExecuteStatement('DELETE FROM wordlist WHERE num_hits = 0;');
+
+    if ($result->rowCount()) {
+      $this->updateInfoTable('total_documents', $this->totalDocumentsInCollection() - 1);
+    }
+  }
+
   /**
    * Saves the indexed data to the database, allowing for string document IDs.
    * @param Collection $stems The collection of stems to be indexed.
