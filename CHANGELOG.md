@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.0.0 - 2026-10-19
+## 🐛 Bugfixes
+- use build task input
+
+## 📚 Documentation Changes
+- updated example index query
+
+## Codex
+- compatible indexer functions
+
+
+
 ## 3.1.4 - 2026-07-14
 ## 🐛 Bugfixes
 - check for class query in get doc
