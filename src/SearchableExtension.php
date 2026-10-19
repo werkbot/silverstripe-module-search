@@ -2,6 +2,10 @@
 
 namespace Werkbot\Search;
 
+use ReflectionMethod;
+use ReflectionException;
+use SilverStripe\Core\Extension;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CheckboxField;
@@ -16,7 +20,6 @@ use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
@@ -24,7 +27,7 @@ use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use Werkbot\Search\Helpers\TNTSearchHelper;
 
-class SearchableExtension extends DataExtension
+class SearchableExtension extends Extension
 {
   private static $has_many = [
     'SearchTerms' => SearchTerm::class . '.SearchTermOf',
@@ -56,10 +59,9 @@ class SearchableExtension extends DataExtension
    **/
   public function updateCMSFields(FieldList $fields)
   {
-    if (DataObject::getSchema()->baseDataClass($this->owner->ClassName) != "SilverStripe\CMS\Model\SiteTree") {
+    if (DataObject::getSchema()->baseDataClass($this->getOwner()->ClassName) != SiteTree::class) {
       $this->addSearchSettingFields($fields);
     }
-    parent::updateCMSFields($fields);
   }
   /**
    * updateSettingsFields
@@ -71,18 +73,18 @@ class SearchableExtension extends DataExtension
    **/
   public function updateSettingsFields(FieldList $fields)
   {
-    if (DataObject::getSchema()->baseDataClass($this->owner->ClassName) == "SilverStripe\CMS\Model\SiteTree") {
+    if (DataObject::getSchema()->baseDataClass($this->getOwner()->ClassName) == SiteTree::class) {
       $this->addSearchSettingFields($fields);
     }
   }
 
   public function addSearchSettingFields(FieldList &$fields)
   {
-    $fields->addFieldToTab('Root', new TabSet('Search', new Tab('Main')));
+    $fields->addFieldToTab('Root', TabSet::create('Search', Tab::create('Main')));
 
-    if ($this->owner->hasField("ShowInSearch")) {
+    if ($this->getOwner()->hasField("ShowInSearch")) {
       $fields->removeByName('ShowInSearch');
-      $ShowInSearch = CheckboxField::create("ShowInSearch", $this->owner->fieldLabel('ShowInSearch'));
+      $ShowInSearch = CheckboxField::create("ShowInSearch", $this->getOwner()->fieldLabel('ShowInSearch'));
       $ShowInSearchGroup = FieldGroup::create(
         'Settings',
         $ShowInSearch
@@ -93,7 +95,7 @@ class SearchableExtension extends DataExtension
     $SearchTermsGridField = GridField::create(
       'SearchTerms',
       'Enter Search Terms',
-      $this->owner->SearchTerms(),
+      $this->getOwner()->SearchTerms(),
       GridFieldConfig::create()
         ->addComponent(GridFieldButtonRow::create('before'))
         ->addComponent(GridFieldToolbarHeader::create())
@@ -103,12 +105,10 @@ class SearchableExtension extends DataExtension
         ->addComponent(new GridFieldOrderableRows('SortOrder'))
     );
 
-    $SearchTermsGridField->getConfig()->getComponentByType(GridFieldEditableColumns::class)->setDisplayFields(array(
-      'SearchTermText'  => function ($record, $column, $grid) {
-        return TextField::create($column)
-          ->setAttribute('placeholder', 'Enter search term');
-      }
-    ));
+    $SearchTermsGridField->getConfig()->getComponentByType(GridFieldEditableColumns::class)->setDisplayFields([
+      'SearchTermText'  => fn($record, $column, $grid) => TextField::create($column)
+        ->setAttribute('placeholder', 'Enter search term')
+    ]);
 
     $fields->addFieldToTab('Root.Search.Main', $SearchTermsGridField);
   }
@@ -142,7 +142,7 @@ class SearchableExtension extends DataExtension
   public function getIndexQuery()
   {
     $query = '';
-    $this->owner->extend('updateIndexQuery', $query);
+    $this->getOwner()->extend('updateIndexQuery', $query);
     return $query;
   }
 
@@ -155,7 +155,7 @@ class SearchableExtension extends DataExtension
    */
   public function getSearchableID()
   {
-    return $this->getIndexQueryDeclaringClassShortname() . "_" . $this->owner->ID;
+    return $this->getIndexQueryDeclaringClassShortname() . "_" . $this->getOwner()->ID;
   }
 
   /**
@@ -167,10 +167,10 @@ class SearchableExtension extends DataExtension
    **/
   public function getSearchableTitle()
   {
-    if ($this->owner->SearchableExtension_Title_ColumnName) {
-      return $this->owner->{$this->owner->SearchableExtension_Title_ColumnName};
+    if ($this->getOwner()->SearchableExtension_Title_ColumnName) {
+      return $this->getOwner()->{$this->getOwner()->SearchableExtension_Title_ColumnName};
     } else {
-      return $this->owner->Title;
+      return $this->getOwner()->Title;
     }
   }
 
@@ -182,8 +182,8 @@ class SearchableExtension extends DataExtension
    **/
   public function getSearchableTitleColumnName()
   {
-    if ($this->owner->SearchableExtension_Title_ColumnName) {
-      return $this->owner->SearchableExtension_Title_ColumnName;
+    if ($this->getOwner()->SearchableExtension_Title_ColumnName) {
+      return $this->getOwner()->SearchableExtension_Title_ColumnName;
     } else {
       return "Title";
     }
@@ -199,13 +199,13 @@ class SearchableExtension extends DataExtension
   public function getSearchableSummary()
   {
     $content = "";
-    if ($this->owner->SearchableExtension_Summary_ColumnName) {
-      $content = $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+    if ($this->getOwner()->SearchableExtension_Summary_ColumnName) {
+      $content = $this->getOwner()->{$this->getOwner()->SearchableExtension_Summary_ColumnName};
     } else {
-      $content = $this->owner->Content;
+      $content = $this->getOwner()->Content;
     }
 
-    $this->owner->extend('updateSearchableSummary', $content);
+    $this->getOwner()->extend('updateSearchableSummary', $content);
 
     return $content;
   }
@@ -223,13 +223,13 @@ class SearchableExtension extends DataExtension
   public function getSearchableContent()
   {
     $content = "";
-    foreach ($this->owner->SearchTerms() as $term) {
+    foreach ($this->getOwner()->SearchTerms() as $term) {
       $content .= $term->SearchTermText . " ";
     }
-    if ($this->owner->SearchableExtension_Summary_ColumnName) {
-      $content .= $this->owner->{$this->owner->SearchableExtension_Summary_ColumnName};
+    if ($this->getOwner()->SearchableExtension_Summary_ColumnName) {
+      $content .= $this->getOwner()->{$this->getOwner()->SearchableExtension_Summary_ColumnName};
     } else {
-      $content .= $this->owner->Content;
+      $content .= $this->getOwner()->Content;
     }
 
     return $content;
@@ -243,8 +243,8 @@ class SearchableExtension extends DataExtension
    **/
   public function getSearchableSummaryColumnName()
   {
-    if ($this->owner->SearchableExtension_Summary_ColumnName) {
-      return $this->owner->SearchableExtension_Summary_ColumnName;
+    if ($this->getOwner()->SearchableExtension_Summary_ColumnName) {
+      return $this->getOwner()->SearchableExtension_Summary_ColumnName;
     } else {
       return "Content";
     }
@@ -258,11 +258,11 @@ class SearchableExtension extends DataExtension
   public function getIndexQueryDeclaringClass()
   {
     try {
-      $definesGetIndexQuery = new \ReflectionMethod($this->owner, 'getIndexQuery');
+      $definesGetIndexQuery = new ReflectionMethod($this->getOwner(), 'getIndexQuery');
       return $definesGetIndexQuery->getDeclaringClass()->getName();
-    } catch (\ReflectionException $e) {
+    } catch (ReflectionException) {
       // If the base class does not define getIndexQuery, it may be defined in an Extension
-      return $this->getUpdateQueryDeclaringClass($this->owner->ClassName);
+      return $this->getUpdateQueryDeclaringClass($this->getOwner()->ClassName);
     }
   }
 
@@ -288,7 +288,7 @@ class SearchableExtension extends DataExtension
    */
   public function getIndexQueryDeclaringClassShortname()
   {
-    return ClassInfo::shortName($this->owner->getIndexQueryDeclaringClass());
+    return ClassInfo::shortName($this->getOwner()->getIndexQueryDeclaringClass());
   }
 
   /**
@@ -300,7 +300,7 @@ class SearchableExtension extends DataExtension
   {
     $id = $this->getSearchableID();
 
-    $classQuery = rtrim($this->owner->getIndexQuery(), ';');
+    $classQuery = rtrim($this->getOwner()->getIndexQuery(), ';');
     $classQuery = str_replace('"', "'", $classQuery);
 
     if (!$classQuery) return [];
@@ -364,12 +364,11 @@ class SearchableExtension extends DataExtension
    **/
   public function onBeforeWrite()
   {
-    if ($this->owner->isInDB() && !$this->owner->hasExtension(Versioned::class)) {
-      if ($this->owner->isChanged($this->owner->SearchableExtension_Title_ColumnName) || $this->owner->isChanged($this->owner->SearchableExtension_Summary_ColumnName)) {
-        $this->owner->updateIndex();
+    if ($this->getOwner()->isInDB() && !$this->getOwner()->hasExtension(Versioned::class)) {
+      if ($this->getOwner()->isChanged($this->getOwner()->SearchableExtension_Title_ColumnName) || $this->getOwner()->isChanged($this->getOwner()->SearchableExtension_Summary_ColumnName)) {
+        $this->getOwner()->updateIndex();
       }
     }
-    parent::onBeforeWrite();
   }
 
   /**
@@ -379,10 +378,9 @@ class SearchableExtension extends DataExtension
    **/
   public function onAfterWrite()
   {
-    if ($this->owner->isChanged('ID') && !$this->owner->hasExtension(Versioned::class)) {
-      $this->owner->insertIndex();
+    if ($this->getOwner()->isChanged('ID') && !$this->getOwner()->hasExtension(Versioned::class)) {
+      $this->getOwner()->insertIndex();
     }
-    parent::onAfterWrite();
   }
 
   /**
@@ -392,8 +390,8 @@ class SearchableExtension extends DataExtension
    **/
   public function onBeforePublish()
   {
-    if (!$this->owner->isPublished()) {
-      $this->owner->insertIndex();
+    if (!$this->getOwner()->isPublished()) {
+      $this->getOwner()->insertIndex();
     }
   }
 
@@ -404,7 +402,7 @@ class SearchableExtension extends DataExtension
    **/
   public function onAfterPublish()
   {
-    $this->owner->updateIndex();
+    $this->getOwner()->updateIndex();
   }
 
   /**
@@ -414,7 +412,7 @@ class SearchableExtension extends DataExtension
    **/
   public function onAfterUnpublish()
   {
-    $this->owner->deleteIndex();
+    $this->getOwner()->deleteIndex();
   }
 
   /**
@@ -424,6 +422,6 @@ class SearchableExtension extends DataExtension
    **/
   public function onAfterDelete()
   {
-    $this->owner->deleteIndex();
+      $this->getOwner()->deleteIndex();
   }
 }

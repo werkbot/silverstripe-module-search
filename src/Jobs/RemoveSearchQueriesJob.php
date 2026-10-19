@@ -2,6 +2,7 @@
 
 namespace Werkbot\Search\Jobs;
 
+use Override;
 use SilverStripe\Core\Config\Configurable;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJobService;
@@ -25,6 +26,7 @@ class RemoveSearchQueriesJob extends AbstractQueuedJob
       return 'Remove Search Queries Job';
   }
 
+  #[Override]
   public function setup(): void
   {
     $maxAge = $this->config()->get('max_age');
@@ -65,7 +67,7 @@ class RemoveSearchQueriesJob extends AbstractQueuedJob
   public function afterComplete()
   {
     $queueNextRun = $this->config()->get('queue_next_run');
-    QueuedJobService::singleton()->queueJob(new RemoveSearchQueriesJob(), date('Y-m-d', strtotime($queueNextRun)));
+    QueuedJobService::singleton()->queueJob(new RemoveSearchQueriesJob(), date('Y-m-d', strtotime((string) $queueNextRun)));
   }
 }
 
