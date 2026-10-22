@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1 - 2026-10-22
+## 🐛 Bugfixes
+- db build class
+- construct with poly execution input
+
+
+
 ## 4.0.0 - 2026-10-19
 ## 🐛 Bugfixes
 - use build task input
