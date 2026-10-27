@@ -16,7 +16,7 @@ class SqliteEngine_WithStringID extends SqliteEngine
   /**
    * Updates a document identified by either an integer or string ID.
    */
-  public function update(int|string $id, array $document)
+  public function update($id, array $document)
   {
     $this->delete($id);
     $this->insert($document);
@@ -25,7 +25,7 @@ class SqliteEngine_WithStringID extends SqliteEngine
   /**
    * Deletes a document identified by either an integer or string ID.
    */
-  public function delete(int|string $documentId)
+  public function delete($documentId)
   {
     $rows = $this->prepareAndExecuteStatement('SELECT * FROM doclist WHERE doc_id = :documentId;', [
       ['key' => ':documentId', 'value' => $documentId],
@@ -59,7 +59,7 @@ class SqliteEngine_WithStringID extends SqliteEngine
    * @param string|null $docIdString The string document ID to be used in the database.
    *        Must be nullable to maintain compatibility with the parent method signature.
    */
-  public function saveToIndex(Collection $stems, int $docId, ?string $docIdString = null)
+  public function saveToIndex(Collection $stems, $docId, ?string $docIdString = null)
   {
     $this->prepareStatementsForIndex();
     $terms = $this->saveWordlist($stems);
@@ -73,7 +73,7 @@ class SqliteEngine_WithStringID extends SqliteEngine
    * @param string|null $docIdString The string document ID to be used in the database.
    *        Must be nullable to maintain compatibility with the parent method signature.
    */
-  public function saveDoclist(array $terms, int $docId, ?string $docIdString = null)
+  public function saveDoclist(array $terms, $docId, ?string $docIdString = null)
   {
     $insert = 'INSERT INTO doclist (term_id, doc_id, hit_count) VALUES (:id, :doc, :hits)';
     $stmt = $this->index->prepare($insert);

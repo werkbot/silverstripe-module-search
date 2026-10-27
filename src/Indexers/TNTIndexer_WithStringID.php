@@ -9,12 +9,12 @@ use TeamTNT\TNTSearch\Indexer\TNTIndexer;
  */
 class TNTIndexer_WithStringID extends TNTIndexer
 {
-  public function update(int|string $id, array $document)
+  public function update($id, array $document)
   {
     $this->engine->update($id, $document);
   }
 
-  public function delete(int|string $documentId)
+  public function delete($documentId)
   {
     $this->engine->delete($documentId);
   }
