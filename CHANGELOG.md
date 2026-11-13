@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.0 - 2026-11-13
+
+
+
+
 ## 4.0.1 - 2026-10-22
 ## 🐛 Bugfixes
 - db build class
