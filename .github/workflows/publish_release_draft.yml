@@ -146,7 +146,7 @@ jobs:
     steps:
       # Merge support changes into develop so they can be included in the next release
       - name: Merge support -> develop
-        if: needs.pre_release_setup.support_branch_name != ''
+        if: needs.pre_release_setup.outputs.support_branch_name != ''
         uses: devmasx/merge-branch@master
         with:
           type: now
@@ -156,7 +156,7 @@ jobs:
 
       # Merge main changes into develop
       - name: Merge main -> develop
-        if: needs.pre_release_setup.support_branch_name == ''
+        if: needs.pre_release_setup.outputs.support_branch_name == ''
         uses: devmasx/merge-branch@master
         with:
           type: now
