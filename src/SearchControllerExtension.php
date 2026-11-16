@@ -151,7 +151,7 @@ class SearchControllerExtension extends DataExtension
         if ($id) {
           $parts = explode("_", $id);
           if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
-            $results->push($obj);
+            if ($obj->canView()) $results->push($obj);
           }
         }
       }
@@ -160,7 +160,7 @@ class SearchControllerExtension extends DataExtension
         if ($result) {
           $parts = explode("_", $result);
           if ($obj = $classlist[$parts[0]]::get()->byID($parts[1])) {
-            $results->push($obj);
+            if ($obj->canView()) $results->push($obj);
           }
         }
       }
